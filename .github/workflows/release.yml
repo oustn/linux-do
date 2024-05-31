@@ -1,0 +1,33 @@
+name: Release
+run-name: ${{ github.actor }} release 🚀
+on:
+  push:
+    branches:
+      - master
+      - alpha
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+jobs:
+  release:
+    name: Release
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Linux Do",
+  "description": "CC for linux.do",
+  "version": "1.0",
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Linux Do",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "manager.html",
+    "open_in_tab": true
+  },
+  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "webRequest",
+    "storage",
+    "contextMenus"
+  ]
+}

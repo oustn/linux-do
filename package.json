@@ -1,0 +1,48 @@
+{
+  "name": "linux-do",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "repositoryUrl": "git@github.com:oustn/linux-do.git",
+  "scripts": {
+    "dev": "tsc && vite build --watch",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "release": "semantic-release"
+  },
+  "dependencies": {
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.14.13",
+    "@mui/material": "^5.14.13",
+    "mobx": "^6.10.2",
+    "mobx-react-lite": "^4.0.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@semantic-release/exec": "^6.0.3",
+    "@types/chrome": "^0.0.268",
+    "@types/lodash": "^4.14.199",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "favicons": "^7.1.4",
+    "lodash": "^4.17.21",
+    "sass": "^1.69.3",
+    "semantic-release": "^22.0.5",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-zip-pack": "^1.0.6"
+  },
+  "volta": {
+    "node": "20.13.1",
+    "npm": "10.8.0"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "branches": [
+    "master",
+    {
+      "name": "alpha",
+      "prerelease": true,
+      "channel": "alpha"
+    }
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          "archives/**"
+        ]
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "./prepare.sh ${nextRelease.version}"
+      }
+    ]
+  ]
+}
