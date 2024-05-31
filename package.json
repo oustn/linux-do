@@ -5,6 +5,7 @@
   "type": "module",
   "repositoryUrl": "git@github.com:oustn/linux-do.git",
   "scripts": {
+    "generate": "node ./lib/generate.cjs && tsc --noEmit",
     "dev": "tsc && vite build --watch",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -18,7 +19,10 @@
     "mobx": "^6.10.2",
     "mobx-react-lite": "^4.0.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "openapi-fetch": "^0.9.7",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@semantic-release/exec": "^6.0.3",
@@ -34,12 +38,13 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "favicons": "^7.1.4",
-    "lodash": "^4.17.21",
     "sass": "^1.69.3",
     "semantic-release": "^22.0.5",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
-    "vite-plugin-zip-pack": "^1.0.6"
+    "vite-plugin-zip-pack": "^1.0.6",
+    "openapi-typescript": "^6.7.6",
+    "undici": "^6.18.2"
   },
   "volta": {
     "node": "20.13.1",

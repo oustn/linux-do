@@ -1,0 +1,789 @@
+[
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "with_uploads",
+          "required": true,
+          "type": "boolean"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "badge_type_id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "badge_type_id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": true
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": true
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "group",
+          "required": true,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "group",
+          "required": true,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "usernames",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "usernames",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [],
+      "all": true
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [],
+      "all": true
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "integer"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "raw",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": true
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "post",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "force_destroy",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "locked",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "post_action_type_id",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "flag_topic",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "post_ids[]",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "topic",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "user",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "status",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "enabled",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "until",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "notification_level",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "timestamp",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "time",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "status_type",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "based_on_last_post",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "category_id",
+          "required": false,
+          "type": "integer"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "multipart/form-data",
+      "fields": [
+        {
+          "name": "type",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "user_id",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "name": "synchronous",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "file",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "type",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "file_name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "file_size",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "metadata",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "unique_identifier",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "for_private_message",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "for_site_setting",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "pasted",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "upload_type",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "file_name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "file_size",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "metadata",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "part_numbers",
+          "required": true,
+          "type": "array"
+        },
+        {
+          "name": "unique_identifier",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "external_upload_identifier",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "unique_identifier",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "parts",
+          "required": true,
+          "type": "array"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "username",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": true
+    }
+  ],
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "name",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "external_ids",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "upload_id",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "type",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "email",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "new_username",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "delete_posts",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "block_email",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "block_urls",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "block_ip",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "suspend_until",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "reason",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "post_action",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "silenced_till",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "reason",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "post_action",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null,
+  null,
+  null,
+  null,
+  null,
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "login",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  [
+    {
+      "contentType": "application/json",
+      "fields": [
+        {
+          "name": "username",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "all": false
+    }
+  ],
+  null
+]

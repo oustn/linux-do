@@ -15,11 +15,11 @@
     "page": "manager.html",
     "open_in_tab": true
   },
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "*://*.linux.do/*",
+    "*://linux.do/*"
+  ],
   "permissions": [
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "webRequest",
     "storage",
     "contextMenus"
   ]
