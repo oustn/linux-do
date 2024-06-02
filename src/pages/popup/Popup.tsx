@@ -1,9 +1,19 @@
-import {observer} from "mobx-react-lite"
+import { observer } from 'mobx-react-lite';
+import { Runtime } from '@src/core/runtime.ts';
 
-const Popup = () => {
+import { TopicList } from './TopicList';
+
+interface PopupProps {
+  runtime: Runtime;
+}
+
+const Popup = ({ runtime }: PopupProps) => {
   return (
     <div className="Popup">
-      hello world
+      <TopicList
+        topics={runtime.latestTopic.export.topics}
+        categories={runtime.categories.export.categories}
+      />
     </div>
   );
 };
@@ -11,4 +21,4 @@ const Popup = () => {
 export default Popup;
 
 
-export const PopupView = observer(Popup)
+export const PopupView = observer(Popup);

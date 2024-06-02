@@ -9,7 +9,8 @@ chrome.runtime.onInstalled.addListener(async () => {
     contexts: ['action']
   })
 
-  await Runtime.getInstance()
+  const r = await Runtime.getInstance()
+  console.log(r)
 })
 
 chrome.contextMenus.onClicked.addListener(async (info) => {

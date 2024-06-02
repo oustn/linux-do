@@ -122,3 +122,6 @@ export class Client extends ApiClient {
     return this.fetch<paths, 'get', '/u/{username}/summary.json'>();
   }
 }
+
+export type ApiReturnType<T extends keyof InstanceType<typeof Client>> =
+  Exclude<Awaited<ReturnType<InstanceType<typeof Client>[T]>>, undefined>
