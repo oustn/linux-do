@@ -20,7 +20,7 @@ export class Runtime {
     makeObservable<Runtime>(this, {
       username: observable,
     });
-    console.log(this.client)
+    console.log(this.client);
     this.init();
   }
 

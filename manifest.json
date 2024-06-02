@@ -21,6 +21,7 @@
   ],
   "permissions": [
     "storage",
-    "contextMenus"
+    "contextMenus",
+    "alarms"
   ]
 }

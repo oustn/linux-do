@@ -13,7 +13,7 @@ import {
 } from './abstract-client.ts';
 import {
   DiscourseError,
-  NotFoundError,
+  NotFoundError, TimeoutError,
   TooManyRequests,
   UnauthenticatedError,
   UnprocessableEntityError,
@@ -24,7 +24,7 @@ import { Get, Param } from '@src/discourse/decorators';
 export class Client extends ApiClient {
   private readonly client: ReturnType<typeof createClient<paths>>;
 
-  private TIMEOUT = 30;
+  private TIMEOUT = 60;
 
   private get headers() {
     const headers = new Headers();
@@ -56,7 +56,13 @@ export class Client extends ApiClient {
       throw new Error('Invalid fetch call');
     }
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.TIMEOUT * 1000);
+    const timeout = setTimeout(() => {
+      try {
+        controller.abort()
+      } catch (e) {
+        throw new TimeoutError()
+      }
+    }, this.TIMEOUT * 1000);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const data = await this.client[method.toUpperCase()](path, {

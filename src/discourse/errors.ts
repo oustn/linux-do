@@ -1,7 +1,7 @@
 export class DiscourseError extends Error {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
-  constructor(message: string, private readonly response: Response) {
+  constructor(message: string, private readonly response?: Response) {
     super(message);
     this.name = this.constructor.name;
   }
@@ -32,7 +32,7 @@ export class TooManyRequests extends DiscourseError {
 }
 
 export class TimeoutError extends DiscourseError {
-  constructor(response: Response) {
-    super('Timeout', response);
+  constructor() {
+    super('Timeout');
   }
 }
