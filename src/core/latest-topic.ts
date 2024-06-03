@@ -34,6 +34,7 @@ export class LatestTopic {
     return {
       topics: this.topics.slice(),
       loading: this.loading,
+      order: this.order,
     };
   }
 
@@ -47,8 +48,11 @@ export class LatestTopic {
   }
 
   @action
-  async fetch() {
+  async fetch(order?: LatestTopicOrder) {
     this.loading = true;
+    if (order) {
+      this.order = order;
+    }
     const topics = await this.client.listLatestTopics(this.order);
     const users: User[] = topics?.users || [];
     this.topics.replace((topics?.topic_list?.topics || []).map((topic) => ({

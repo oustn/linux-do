@@ -13,7 +13,7 @@ import {
 } from './abstract-client.ts';
 import {
   DiscourseError,
-  NotFoundError, TimeoutError,
+  NotFoundError,
   TooManyRequests,
   UnauthenticatedError,
   UnprocessableEntityError,
@@ -56,13 +56,7 @@ export class Client extends ApiClient {
       throw new Error('Invalid fetch call');
     }
     const controller = new AbortController();
-    const timeout = setTimeout(() => {
-      try {
-        controller.abort()
-      } catch (e) {
-        throw new TimeoutError()
-      }
-    }, this.TIMEOUT * 1000);
+    const timeout = setTimeout(() => controller.abort('Timeout'), this.TIMEOUT * 1000);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const data = await this.client[method.toUpperCase()](path, {
