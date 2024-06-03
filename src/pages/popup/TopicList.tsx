@@ -146,7 +146,8 @@ export const TopicList = (props: TopicListProps) => {
                           </ListItemAvatar>
                           <Typography
                             sx={{
-                              mt: 1
+                              mt: 2,
+                              lineHeight: 1,
                             }}
                             variant="caption"
                             color="text.primary"
