@@ -16,7 +16,13 @@ const Popup = ({ runtime }: PopupProps) => {
       display="flex"
       flexDirection="column"
     >
-      <AppBar/>
+      <AppBar
+        isLogin={runtime.user.export.isLogin}
+        userBasic={runtime.user.export.basic}
+        userSummary={runtime.user.export.summary}
+        unreadNotification={runtime.user.export.unreadNotification}
+        unreadPrivateMessage={runtime.user.export.unreadPrivateMessage}
+      />
       <TopicList
         topics={runtime.latestTopic.export.topics}
         categories={runtime.categories.export.categories}

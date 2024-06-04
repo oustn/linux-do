@@ -19,7 +19,7 @@ import {
   UnprocessableEntityError,
 } from '@src/discourse/errors.ts';
 import type { MediaType } from 'openapi-typescript-helpers';
-import { Get, Param } from '@src/discourse/decorators';
+import { Get, Param, Override } from '@src/discourse/decorators';
 
 export class Client extends ApiClient {
   private readonly client: ReturnType<typeof createClient<paths>>;
@@ -114,6 +114,25 @@ export class Client extends ApiClient {
     @Param('username') _username: ApiParams<paths, 'get', '/u/{username}/summary.json'>['username'],
   ) {
     return this.fetch<paths, 'get', '/u/{username}/summary.json'>();
+  }
+
+  @Override('getNotifications', {
+    params: {
+      query: {
+        filter: 'unread'
+      }
+    },
+  })
+  getUnreadNotifications() {
+    return this.getNotifications()
+  }
+
+  @Get('/topics/private-messages-unread/{username}.json')
+  listUnreadUserPrivateMessages(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('username') _username: ApiParams<paths, 'get', '/topics/private-messages/{username}.json'>['username']
+  ) {
+    return this.fetch<paths, 'get', '/topics/private-messages/{username}.json'>()
   }
 }
 

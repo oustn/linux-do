@@ -1,50 +1,46 @@
 import _ from 'lodash';
-import { computed, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable, toJS } from 'mobx';
 import { Reaction } from './reaction';
+import { UserBasic } from '@src/core/type';
 
 interface ConfigInterface {
   autoRefreshing: boolean;
+  username: string | null;
+  userBasic: UserBasic | null;
 }
+
+type keys = keyof ConfigInterface;
 
 export class Config extends Reaction implements ConfigInterface {
   private static readonly key = 'linux.do.config';
 
   autoRefreshing = false;
 
+  username: string | null = null;
+
+  userBasic: UserBasic | null = null;
+
   private get export(): ConfigInterface {
     return {
       autoRefreshing: this.autoRefreshing,
+      username: this.username,
+      userBasic: toJS(this.userBasic),
     };
-  }
-
-  private set export(config: ConfigInterface) {
-    if (!config) {
-      return;
-    }
-    Object.entries(config).forEach(([key, value]) => {
-      this[key as keyof ConfigInterface] = value;
-    });
-    this.autoRefreshing = config.autoRefreshing;
   }
 
   constructor() {
     super();
-    this.init().then();
 
     makeObservable<ConfigInterface, 'export'>(this, {
       autoRefreshing: observable,
       export: computed,
+      username: observable,
+      userBasic: observable,
     });
   }
 
-  private async init() {
+  async init() {
     await this.initConfig();
-
-    chrome.storage.onChanged.addListener((changes) => {
-      if (changes[Config.key]) {
-        this.export = changes[Config.key].newValue as ConfigInterface;
-      }
-    });
 
     this.reaction(() => this.export, (config, oldConfig) => {
       if (_.isEqual(config, oldConfig)) {
@@ -55,6 +51,20 @@ export class Config extends Reaction implements ConfigInterface {
   }
 
   private async initConfig() {
-    this.export = (await chrome.storage.sync.get(Config.key)) as ConfigInterface;
+    const { [Config.key]: config } = await chrome.storage.sync.get(Config.key);
+    const {
+      username,
+      userBasic,
+      autoRefreshing,
+    } = config
+
+    this.username = username;
+    this.userBasic = userBasic;
+    this.autoRefreshing = autoRefreshing;
+  }
+
+  @action
+  updateConfig(key: keys, value: unknown) {
+    this[key] = value as never;
   }
 }

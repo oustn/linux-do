@@ -7,7 +7,7 @@ export interface paths extends openapi {
 
   "/u/{username}/summary.json": {
     get: operations["getUserSummary"];
-  }
+  };
 }
 
 interface operations {
@@ -50,6 +50,11 @@ interface operations {
               days_visited: number;
               bookmark_count: number;
             }
+            users: Array<{
+              avatar_template: string;
+              name: string
+              username: string
+            }>
           }
         }
       }

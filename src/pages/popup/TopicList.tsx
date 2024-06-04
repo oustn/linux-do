@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack'
+import Stack from '@mui/material/Stack';
 
 import type { Category, Topic } from '@src/core/type';
 import { avatarUrl, formatDate, formatNumber, handlerViewTopic } from '@src/utils';
@@ -22,10 +22,10 @@ interface TopicListProps {
   categories: Array<Category>;
   order: LatestTopicOrder;
   handleFetch: (order: LatestTopicOrder) => void;
-  loading: boolean
+  loading: boolean;
 }
 
-function Partial({title, value}:{ title: string, value?: string | number }) {
+function Partial({ title, value }: { title: string, value?: string | number }) {
   return (
     <Box
       lineHeight="1em"
@@ -43,13 +43,13 @@ function Partial({title, value}:{ title: string, value?: string | number }) {
         variant="body2"
         color="text.primary"
         sx={{
-          fontWeight: 'bold'
+          fontWeight: 'bold',
         }}
       >
         {value}
       </Typography>
     </Box>
-  )
+  );
 }
 
 const FILTER: Array<{
@@ -139,10 +139,10 @@ export const TopicList = (props: TopicListProps) => {
                         >
                           <ListItemAvatar
                             sx={{
-                              minWidth: 'auto'
+                              minWidth: 'auto',
                             }}
                           >
-                            <Avatar alt="Remy Sharp" src={avatarUrl(topic.author.avatar_template!)} />
+                            <Avatar alt={topic.author.username} src={avatarUrl(topic.author.avatar_template!)} />
                           </ListItemAvatar>
                           <Typography
                             sx={{
@@ -151,6 +151,7 @@ export const TopicList = (props: TopicListProps) => {
                             }}
                             variant="caption"
                             color="text.primary"
+                            textAlign="center"
                           >
                             {topic.author.name || topic.author.username}
                           </Typography>
@@ -160,7 +161,16 @@ export const TopicList = (props: TopicListProps) => {
                           flexShrink={1}
                         >
                           <ListItemText
-                            primary={topic.title}
+                            primary={
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  mb: 1
+                                }}
+                              >
+                                {topic.title}
+                              </Typography>
+                            }
                             secondary={
                               <React.Fragment>
                                 <CategoryTip categories={categories} id={topic.category_id} />

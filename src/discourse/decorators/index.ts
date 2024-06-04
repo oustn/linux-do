@@ -1,8 +1,10 @@
 import 'reflect-metadata';
+import _ from 'lodash';
 
 type ParameterType = 'param' | 'query' | 'body';
 
 const ParameterMetadataKey = Symbol('ParameterMetadataKey');
+const OverrideMetadataKey = Symbol('OverrideMetadataKey');
 
 
 interface ParameterPayload {
@@ -88,6 +90,11 @@ function MethodDecorator(type: string, path: string): MethodDecorator {
         }
       }
 
+      if (rest.length && typeof rest[rest.length - 1] === 'symbol') {
+        const value = Reflect.getMetadata(OverrideMetadataKey, target, rest[rest.length - 1] as symbol)
+        _.merge(init, value)
+      }
+
       if (type === 'get' && init.body) {
         init.params = init.params || {};
         init.params.query = init.params.query || {};
@@ -117,4 +124,20 @@ function ParameterDecorator(type: ParameterType, name?: string): ParameterDecora
     });
     Reflect.defineMetadata(ParameterMetadataKey, parameters, target, propertyKey!);
   };
+}
+
+export function Override(funcName: string, value: unknown) {
+  return (target: object, _propertyKey: string | symbol | undefined, descriptor: PropertyDescriptor) => {
+    const prototype = Reflect.getPrototypeOf(target)!
+    const key = Symbol('override')
+    Reflect.defineMetadata(OverrideMetadataKey, value, prototype, key)
+
+    descriptor.value = function (...args: unknown[]) {
+      const fn = Reflect.getOwnPropertyDescriptor(prototype, funcName)
+      if (!fn || typeof fn.value !== 'function') {
+        throw new Error(`override method ${funcName} not found`)
+      }
+      fn.value.call(this, ...args, key)
+    }
+  }
 }
