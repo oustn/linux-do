@@ -60,6 +60,7 @@ export default defineConfig({
                     return '[name].js'
                 },
             },
-        }
+        },
+        cssCodeSplit: true
     }
 })

@@ -23,5 +23,12 @@
     "storage",
     "contextMenus",
     "alarms"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://linux.do/*"],
+      "js": ["src/contents/auto-scroll/index.ts"],
+      "css": ["src/contents/auto-scroll/index.scss"]
+    }
   ]
 }
