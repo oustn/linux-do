@@ -51,7 +51,7 @@ export class Config extends Reaction implements ConfigInterface {
   }
 
   private async initConfig() {
-    const { [Config.key]: config } = await chrome.storage.sync.get(Config.key);
+    const { [Config.key]: config = {} } = await chrome.storage.sync.get(Config.key);
     const {
       username,
       userBasic,

@@ -61,6 +61,6 @@ export default defineConfig({
                 },
             },
         },
-        cssCodeSplit: true
+        cssCodeSplit: true,
     }
 })

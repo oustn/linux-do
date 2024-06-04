@@ -1,59 +1,32 @@
-import history from 'history/browser';
-
 import './index.scss';
 
+const injectScript = (file: string, node: string) => {
+  const th = document.querySelector(node);
+  const s = document.createElement('script');
+  s.setAttribute('type', 'text/javascript');
+  s.setAttribute('src', file);
+  th?.appendChild(s);
+};
+injectScript(chrome.runtime.getURL('inject.js'), 'body');
 
-class RouteListener {
-  currentPath: string;
-  currentHash: string;
+(async () => {
+  const { URL_CHANGE_MESSAGE } = await import('@src/constant.ts');
 
-  constructor() {
-    this.currentPath = window.location.pathname;
-    this.currentHash = window.location.hash;
-    this.init();
-  }
-
-  init() {
-    // Listen for popstate and hashchange events
-    window.addEventListener('popstate', this.onRouteChange.bind(this));
-    window.addEventListener('hashchange', this.onRouteChange.bind(this));
-
-    // Override pushState and replaceState to listen for these methods
-    this.overrideHistoryMethods();
-  }
-
-  onRouteChange() {
-    const newPath = window.location.pathname;
-    const newHash = window.location.hash;
-
-    if (newPath !== this.currentPath || newHash !== this.currentHash) {
-      console.log('Route changed to:', window.location.href);
-      launch();
-      this.currentPath = newPath;
-      this.currentHash = newHash;
+  window.addEventListener('message', (event) => {
+    // We only accept messages from ourselves
+    if (event.source !== window) {
+      return;
     }
-  }
 
-  overrideHistoryMethods() {
-    const pushState = window.history.pushState;
-    const replaceState = window.history.replaceState;
+    if (event?.data?.type !== URL_CHANGE_MESSAGE) {
+      return;
+    }
 
-    window.history.pushState = (...args: Parameters<typeof pushState>) => {
-      const result = pushState.apply(history, args);
-      this.onRouteChange();
-      return result;
-    };
+    launch();
+  }, false);
+})();
 
-    window.history.replaceState = (...args: Parameters<typeof pushState>) => {
-      const result = replaceState.apply(history, args);
-      this.onRouteChange();
-      return result;
-    };
-  }
-}
-
-// Create an instance of RouteListener to start listening for route changes
-new RouteListener();
+// inject script
 
 function launch() {
   if (/\/t\/topic\/.*/.test(window.location.href)) {
