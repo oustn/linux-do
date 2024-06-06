@@ -8,7 +8,6 @@ interface PageProps {
   children: React.ReactNode;
 }
 
-
 const Page = ({ children }: PageProps) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 

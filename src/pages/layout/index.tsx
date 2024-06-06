@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Runtime } from '@src/core/runtime.ts';
 
 import Page from './Page.tsx';
 import './index.scss';
 
-export async function render(App: React.FC<{ runtime: Runtime }>) {
-  const runtime = await Runtime.getInstance();
+// eslint-disable-next-line react-refresh/only-export-components
+function Main({ App }: { App: React.FC<{ runtime: Runtime | null }> }) {
+  const [runtime, updateRuntime] = useState<Runtime | null>(null);
 
-  ReactDOM.createRoot(document.getElementById('app')!).render(
+  useEffect(() => {
+    Runtime.getInstance().then(runtime => updateRuntime(runtime));
+  }, []);
+
+  return (
     <React.StrictMode>
       <Page>
         <App runtime={runtime} />
       </Page>
-    </React.StrictMode>,
+    </React.StrictMode>
   );
+}
+
+export async function render(App: React.FC<{ runtime: Runtime | null }>) {
+  ReactDOM.createRoot(document.getElementById('app')!).render(<Main App={App} />);
 }

@@ -10,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { avatarUrl, handlerLogin } from '@src/utils';
+import { avatarUrl, handlerLogin, goto } from '@src/utils';
 import Avatar from '@mui/material/Avatar';
 import { UserBasic, UserSummary } from '@src/core/type';
 
@@ -38,6 +38,10 @@ export function AppBar(props: AppBarProps) {
 
     setAnchorEl(event.currentTarget);
   };
+
+  const handleHome = async () => {
+    await goto(`https://linux.do`)
+  }
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -69,20 +73,28 @@ export function AppBar(props: AppBarProps) {
     <Box sx={{ flexGrow: 0, flexShrink: 0 }}>
       <MaterialAppBar position="static">
         <Toolbar>
-          <img
-            height="28px"
-            src="icons/active128.png"
-            loading="lazy"
-            alt="Linux Do"
-          />
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: 'block', ml: 1 }}
+          <Box
+            display="flex"
+            sx={{
+              cursor: 'pointer',
+            }}
+            onClick={handleHome}
           >
-            LINUX DO
-          </Typography>
+            <img
+              height="28px"
+              src="icons/active128.png"
+              loading="lazy"
+              alt="Linux Do"
+            />
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: 'block', ml: 1 }}
+            >
+              LINUX DO
+            </Typography>
+          </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: 'flex' }}>
             {
@@ -90,7 +102,7 @@ export function AppBar(props: AppBarProps) {
                 <React.Fragment>
                   <IconButton size="large" aria-label="show unread private message" color="inherit">
                     <Badge badgeContent={unreadPrivateMessage} color="error">
-                      <MailIcon />
+                    <MailIcon />
                     </Badge>
                   </IconButton>
                   <IconButton
