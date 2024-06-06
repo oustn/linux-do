@@ -22,7 +22,7 @@ window.addEventListener('message', (event) => {
     return;
   }
 
-  const { path, prevPath } = event.data
+  const { path, prevPath } = event?.data?.payload || {}
   const reg = /\/t\/topic\/\d+/
   // 页面内滚动
   if (reg.exec(path)?.[0] === reg.exec(prevPath)?.[0]) return
