@@ -1,6 +1,15 @@
 import { URL_CHANGE_MESSAGE } from '@src/constant';
 
-type Handler = (event: { location: string, action: string }) => void;
+interface Payload {
+  location: string,
+  action: string,
+  path: string,
+  prevPath: string,
+  hash: string,
+  prevHash: string
+}
+
+type Handler = (event: Payload) => void;
 
 class RouteListener {
   currentPath: string;
@@ -29,6 +38,10 @@ class RouteListener {
       this.handler({
         location: window.location.href,
         action,
+        prevPath: this.currentPath ?? '',
+        prevHash: this.currentHash ?? '',
+        path: newPath ?? '',
+        hash: newHash ?? '',
       });
       this.currentPath = newPath;
       this.currentHash = newHash;
@@ -53,13 +66,10 @@ class RouteListener {
   }
 }
 
-const handler = ({ location, action }: { location: string, action: string }) => {
+const handler = (payload: Payload) => {
   window.postMessage({
     type: URL_CHANGE_MESSAGE,
-    payload: {
-      location,
-      action,
-    },
+    payload,
   }, '*');
 };
 // Create an instance of RouteListener to start listening for route changes

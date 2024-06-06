@@ -4,8 +4,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import zipPack from 'vite-plugin-zip-pack';
 
-import { ChromeExtensionManifestPlugin, resolveEntries, ViteIconPlugin } from './plugins';
-import { isDev } from './lib/utils';
+import { ChromeExtensionManifestPlugin, ViteIconPlugin } from './plugins';
+import { isDev, resolveEntries } from './lib/utils';
 import packageJson from './package.json';
 
 const zip = process.env.EXTENSION_VERSION;

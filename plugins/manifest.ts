@@ -1,48 +1,8 @@
-import { basename, dirname, extname, resolve } from 'node:path';
+import { extname } from 'node:path';
 import type { Plugin } from 'vite';
 import _ from 'lodash';
 import Manifest from '../manifest.json';
-
-export function resolveEntries(contentScript = false) {
-  const entries: { key: string, value: string, name: string, path: string, withCss: boolean }[] = [];
-
-  const names = new Set<string>();
-
-  function walk(value: unknown, path = '') {
-    if (_.isPlainObject(value)) {
-      _.forOwn(value, (value, key) => {
-        walk(value, path ? `${path}.${key}` : key);
-      });
-    } else if (_.isString(value) && (_.endsWith(value, '.html') || _.endsWith(value, '.ts'))) {
-      if (contentScript && !path.includes('content_scripts') && !path.includes('web_accessible_resources')) {
-        return;
-      }
-      let name = basename(value).replace(/\.(html|ts)$/, '');
-      if (name === 'index') {
-        name = basename(dirname(value));
-      }
-      if (names.has(name)) {
-        name = path.replace(/\./g, '_');
-      }
-      names.add(name);
-      entries.push({
-        key: path,
-        value,
-        name,
-        path: resolve(__dirname, '..', value),
-        withCss: path.includes('content_scripts') && _.get(Manifest, path.replace('js', 'css')),
-      });
-    } else if (_.isArray(value)) {
-      value.forEach((value, index) => {
-        walk(value, path ? `${path}.${index}` : `${index}`);
-      });
-    }
-  }
-
-  walk(Manifest);
-
-  return entries;
-}
+import { cleanArray, resolveEntries } from '../lib/utils';
 
 export function ChromeExtensionManifestPlugin(): Plugin {
   const manifest: chrome.runtime.ManifestV3 = JSON.parse(JSON.stringify(Manifest));
@@ -101,13 +61,14 @@ export function ChromeExtensionManifestPlugin(): Plugin {
         manifest.action.default_icon = manifest.icons['16'];
       }
 
+      cleanArray(manifest)
+
       this.emitFile({
         fileName: 'manifest.json',
         type: 'asset',
         source: JSON.stringify(manifest, null, 2),
       });
 
-      // todo 删除
       const contentScripts = _.get(manifest, 'web_accessible_resources', [])
         .map((d: { resources: string[]; }) => d.resources).flat().concat(
           ..._.get(manifest, 'content_scripts', []).map((d: { js: string[]; }) => d.js),

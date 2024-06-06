@@ -22,12 +22,31 @@ window.addEventListener('message', (event) => {
     return;
   }
 
+  const { path, prevPath } = event.data
+  const reg = /\/t\/topic\/\d+/
+  // 页面内滚动
+  if (reg.exec(path)?.[0] === reg.exec(prevPath)?.[0]) return
+
   launch();
 }, false);
 
-// inject script
+let observer: IntersectionObserver | null = null;
+let root: HTMLDivElement | null = null;
+
+// watch for flex
+function handleIntersection(entries: IntersectionObserverEntry[]) {
+  if (!entries?.[0]?.isIntersecting) {
+    observer?.disconnect();
+    observer = null;
+    launch();
+  }
+}
 
 function launch() {
+  if (root) {
+    root?.parentElement?.removeChild(root);
+    root = null;
+  }
   if (!/\/t\/topic\/.*/.test(window.location.href)) {
     return;
   }
@@ -36,16 +55,12 @@ function launch() {
     document.getElementById('topic-progress-wrapper');
   if (!target) return;
   const div = document.createElement('div');
+  div.className = '__inject_from_plugin';
   target.appendChild(div);
   render(div);
+  root = div;
+  observer = new IntersectionObserver(handleIntersection);
+  observer.observe(target);
 }
 
 launch();
-// 区分自适应宽度的元素
-
-// const target = document.querySelector('.timeline-scrollarea-wrapper') ||
-//   document.getElementById('topic-progress-wrapper')
-//
-// const el = document.querySelectorAll('.loading-container')
-// console.log('hello')
-// console.log(el)

@@ -1,11 +1,11 @@
-import process from 'node:process'
+import process from 'node:process';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'url';
 import _ from 'lodash';
 
 import Manifest from '../manifest.json';
 
-export const isDev = process.env.NODE_ENV !== 'production'
+export const isDev = process.env.NODE_ENV !== 'production';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,4 +49,16 @@ export function resolveEntries(contentScript = false) {
   walk(Manifest);
 
   return entries;
+}
+
+export function cleanArray(object: unknown) {
+  if (!_.isPlainObject(object)) return;
+  Object.entries(object).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      object[key] = value.filter(d => d);
+      object[key].forEach((d: unknown) => cleanArray(d));
+    } else {
+      cleanArray(value);
+    }
+  });
 }

@@ -1,3 +1,13 @@
-body {
-  background: pink
+.timeline-scrollarea-wrapper {
+  .__inject_from_plugin {
+    margin-top: 8px;
+  }
+}
+
+#topic-progress-wrapper {
+  align-items: center;
+  .__inject_from_plugin {
+    order: -1;
+    margin-right: 8px;
+  }
 }
