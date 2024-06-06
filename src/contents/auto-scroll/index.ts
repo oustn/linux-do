@@ -1,4 +1,5 @@
 import { URL_CHANGE_MESSAGE } from '@src/constant.ts';
+import { render } from './Button.tsx';
 
 import './index.scss';
 
@@ -27,9 +28,16 @@ window.addEventListener('message', (event) => {
 // inject script
 
 function launch() {
-  if (/\/t\/topic\/.*/.test(window.location.href)) {
-    console.log('🚀');
+  if (!/\/t\/topic\/.*/.test(window.location.href)) {
+    return;
   }
+  console.log('🚀');
+  const target = document.querySelector('.timeline-scrollarea-wrapper') ||
+    document.getElementById('topic-progress-wrapper');
+  if (!target) return;
+  const div = document.createElement('div');
+  target.appendChild(div);
+  render(div);
 }
 
 launch();

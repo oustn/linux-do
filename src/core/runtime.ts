@@ -1,5 +1,5 @@
 import { Client } from '@src/discourse/client.ts';
-import { makeObservable, observable } from 'mobx';
+import { observable } from 'mobx';
 import { Config } from './config';
 import { Reaction } from './reaction';
 import { DEFAULT_ALARM, setAlarm } from '@src/utils';
@@ -22,12 +22,16 @@ export class Runtime extends Reaction {
 
   private readonly client: Client;
 
+  @observable.ref
   private readonly config;
 
+  @observable.ref
   readonly user: User;
 
+  @observable.ref
   readonly latestTopic: LatestTopic;
 
+  @observable.ref
   readonly categories: Categories;
 
   constructor(config: Config) {
@@ -37,15 +41,6 @@ export class Runtime extends Reaction {
     this.latestTopic = new LatestTopic(this.client);
     this.categories = new Categories(this.client);
     this.user = new User(this.client, this.config);
-
-    makeObservable<Runtime,
-      'config'
-    >(this, {
-      config: observable.ref,
-      latestTopic: observable.ref,
-      categories: observable.ref,
-      user: observable.ref,
-    });
   }
 
   private async init() {

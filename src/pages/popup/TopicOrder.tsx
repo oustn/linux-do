@@ -63,7 +63,7 @@ export function TopicOrder({ orders, value, onChange, loading }: TopicFilterProp
         >
           {
             orders.map((order) => (
-              <ToggleButton value={order.value} aria-label={order.name}>
+              <ToggleButton key={order.value} value={order.value} aria-label={order.name}>
                 <Typography
                   variant="caption"
                 >

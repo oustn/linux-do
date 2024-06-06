@@ -1,5 +1,5 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { computed, makeObservable, observable, runInAction, toJS } from 'mobx';
+import { computed, observable, runInAction, toJS } from 'mobx';
 import { Config } from '@src/core/config.ts';
 import { updateActionIcon } from '@src/utils';
 import { Reaction } from '@src/core/reaction.ts';
@@ -10,12 +10,23 @@ export type UserBasic = UserSummary['users'][number]
 export class User extends Reaction {
   private client: Client;
   private config: Config;
+
+  @observable
   private username: string | null = null;
+
+  @observable.ref
   private summary: UserSummary | null = null;
+
+  @observable.ref
   private basic: UserBasic | null = null;
+
+  @observable
   private unreadNotification: number = 0;
+
+  @observable
   private unreadPrivateMessage: number = 0;
 
+  @computed
   get export() {
     return {
       username: this.username,
@@ -33,20 +44,6 @@ export class User extends Reaction {
     this.config = config;
     this.username = this.config.username;
     this.basic = this.config.userBasic;
-
-    makeObservable<
-      User,
-      'username' |
-      'summary' |
-      'unreadNotification' |
-      'unreadPrivateMessage'
-    >(this, {
-      username: observable,
-      export: computed,
-      summary: observable.ref,
-      unreadNotification: observable,
-      unreadPrivateMessage: observable,
-    });
 
     this.reaction(() => this.username, async () => {
       const icon = this.username ? 'active' : 'icon';

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { action, computed, makeObservable, observable, toJS } from 'mobx';
+import { action, computed, observable, toJS } from 'mobx';
 import { Reaction } from './reaction';
 import { UserBasic } from '@src/core/type';
 
@@ -14,29 +14,22 @@ type keys = keyof ConfigInterface;
 export class Config extends Reaction implements ConfigInterface {
   private static readonly key = 'linux.do.config';
 
+  @observable
   autoRefreshing = false;
 
+  @observable
   username: string | null = null;
 
+  @observable.ref
   userBasic: UserBasic | null = null;
 
+  @computed
   private get export(): ConfigInterface {
     return {
       autoRefreshing: this.autoRefreshing,
       username: this.username,
       userBasic: toJS(this.userBasic),
     };
-  }
-
-  constructor() {
-    super();
-
-    makeObservable<ConfigInterface, 'export'>(this, {
-      autoRefreshing: observable,
-      export: computed,
-      username: observable,
-      userBasic: observable,
-    });
   }
 
   async init() {

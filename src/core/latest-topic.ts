@@ -1,5 +1,5 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { IObservableArray, makeObservable, observable, action, computed } from 'mobx';
+import { IObservableArray, observable, action, computed, runInAction } from 'mobx';
 
 export enum LatestTopicOrder {
   default = 'default',
@@ -24,12 +24,15 @@ export type Topic =
 export class LatestTopic {
   private order: LatestTopicOrder = LatestTopicOrder.created;
 
+  @observable.ref
   topics: IObservableArray<Topic> = observable.array([], { deep: false });
 
   private readonly client: Client;
 
+  @observable
   loading = false;
 
+  @computed
   get export() {
     return {
       topics: this.topics.slice(),
@@ -40,11 +43,6 @@ export class LatestTopic {
 
   constructor(client: Client) {
     this.client = client;
-    makeObservable(this, {
-      topics: observable.ref,
-      loading: observable,
-      export: computed,
-    });
   }
 
   @action
@@ -55,10 +53,12 @@ export class LatestTopic {
     }
     const topics = await this.client.listLatestTopics(this.order);
     const users: User[] = topics?.users || [];
-    this.topics.replace((topics?.topic_list?.topics || []).map((topic) => ({
-      ...topic,
-      author: users.find((user) => user.id === topic?.posters?.[0].user_id)!,
-    })));
-    this.loading = false;
+    runInAction(() => {
+      this.topics.replace((topics?.topic_list?.topics || []).map((topic) => ({
+        ...topic,
+        author: users.find((user) => user.id === topic?.posters?.[0].user_id)!,
+      })));
+      this.loading = false;
+    })
   }
 }
