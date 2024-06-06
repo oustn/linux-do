@@ -3,7 +3,7 @@ import type { Plugin } from 'vite';
 import _ from 'lodash';
 import Manifest from '../manifest.json';
 
-export function resolveEntries() {
+export function resolveEntries(contentScript = false) {
   const entries: { key: string, value: string, name: string, path: string, withCss: boolean }[] = [];
 
   const names = new Set<string>();
@@ -14,6 +14,9 @@ export function resolveEntries() {
         walk(value, path ? `${path}.${key}` : key);
       });
     } else if (_.isString(value) && (_.endsWith(value, '.html') || _.endsWith(value, '.ts'))) {
+      if (contentScript && !path.includes('content_scripts') && !path.includes('web_accessible_resources')) {
+        return;
+      }
       let name = basename(value).replace(/\.(html|ts)$/, '');
       if (name === 'index') {
         name = basename(dirname(value));
@@ -56,14 +59,12 @@ export function ChromeExtensionManifestPlugin(): Plugin {
     generateBundle(__, bundle) {
       const icons = [];
       const entries = resolveEntries();
-      const dynamicImports = new Set<string>();
 
       for (const file in bundle) {
         const chunk = bundle[file];
         if (chunk.type === 'chunk' && chunk.isEntry) {
           const ref = chunk.imports[0];
           if (ref.includes('preload-helper-')) {
-            chunk.dynamicImports.forEach((i) => dynamicImports.add(i));
             const refChunk = bundle[ref];
             if (refChunk.type === 'chunk') {
               const refCode = refChunk.code;
@@ -100,18 +101,20 @@ export function ChromeExtensionManifestPlugin(): Plugin {
         manifest.action.default_icon = manifest.icons['16'];
       }
 
-      const webResources = _.get(manifest, 'web_accessible_resources', []);
-      _.set(manifest, 'web_accessible_resources', [
-        ...webResources.map(d => ({
-          ...d,
-          resources: [...d.resources, ...Array.from(dynamicImports)],
-        })),
-      ]);
-
       this.emitFile({
         fileName: 'manifest.json',
         type: 'asset',
         source: JSON.stringify(manifest, null, 2),
+      });
+
+      // todo 删除
+      const contentScripts = _.get(manifest, 'web_accessible_resources', [])
+        .map((d: { resources: string[]; }) => d.resources).flat().concat(
+          ..._.get(manifest, 'content_scripts', []).map((d: { js: string[]; }) => d.js),
+        );
+
+      contentScripts.forEach((file: string) => {
+        Reflect.deleteProperty(bundle, file);
       });
     },
   };
