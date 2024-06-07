@@ -30,13 +30,13 @@ export async function cancelAlarm(name: string = DEFAULT_ALARM) {
   await chrome.alarms.clear(name);
 }
 
-export function goto(url: string) {
-  return chrome.tabs.create({ url });
+export function goto(url: string, inactive: boolean = false) {
+  return chrome.tabs.create({ url, active: !inactive });
 }
 
-export async function handlerViewTopic(id?: number) {
+export async function handlerViewTopic(id?: number, inactive = false) {
   if (id) {
-    return goto(`https://linux.do/t/topic/${id}`)
+    return goto(`https://linux.do/t/topic/${id}`, inactive)
   }
   return null;
 }

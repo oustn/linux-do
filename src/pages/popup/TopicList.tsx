@@ -127,6 +127,7 @@ export const TopicList = (props: TopicListProps) => {
                     <ListItem alignItems="flex-start" disablePadding>
                       <ListItemButton
                         onClick={() => handlerViewTopic(topic.id)}
+                        onAuxClick={() => handlerViewTopic(topic.id, true)}
                       >
                         <Box
                           alignSelf="flex-start"
