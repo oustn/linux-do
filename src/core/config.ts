@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { action, computed, observable, toJS } from 'mobx';
+import { action, computed, makeObservable, observable, toJS } from 'mobx';
 import { Reaction } from './reaction';
 import { UserBasic } from '@src/core/type';
 
@@ -30,6 +30,11 @@ export class Config extends Reaction implements ConfigInterface {
       username: this.username,
       userBasic: toJS(this.userBasic),
     };
+  }
+
+  constructor() {
+    super();
+    makeObservable(this)
   }
 
   async init() {

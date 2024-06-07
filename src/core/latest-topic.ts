@@ -1,5 +1,5 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { IObservableArray, observable, action, computed, runInAction } from 'mobx';
+import { action, computed, IObservableArray, makeObservable, observable, runInAction } from 'mobx';
 
 export enum LatestTopicOrder {
   default = 'default',
@@ -43,6 +43,7 @@ export class LatestTopic {
 
   constructor(client: Client) {
     this.client = client;
+    makeObservable(this);
   }
 
   @action
@@ -59,6 +60,6 @@ export class LatestTopic {
         author: users.find((user) => user.id === topic?.posters?.[0].user_id)!,
       })));
       this.loading = false;
-    })
+    });
   }
 }

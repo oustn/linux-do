@@ -1,5 +1,5 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { action, computed, IObservableArray, observable, runInAction } from 'mobx';
+import { action, computed, IObservableArray, makeObservable, observable, runInAction } from 'mobx';
 
 export type Category =
   Exclude<Exclude<ApiReturnType<'listCategories'>['category_list'], undefined>['categories'], undefined>[number];
@@ -24,6 +24,7 @@ export class Categories {
 
   constructor(client: Client) {
     this.client = client;
+    makeObservable(this)
   }
 
   @action

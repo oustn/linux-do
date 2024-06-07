@@ -1,7 +1,7 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { computed, observable, runInAction, toJS } from 'mobx';
+import { computed, makeObservable, observable, runInAction, toJS } from 'mobx';
 import { Config } from '@src/core/config.ts';
-import { updateActionIcon } from '@src/utils';
+import { updateActionIcon, updateBadgeText } from '@src/utils';
 import { Reaction } from '@src/core/reaction.ts';
 
 export type UserSummary = ApiReturnType<'getUserSummary'>
@@ -44,12 +44,17 @@ export class User extends Reaction {
     this.config = config;
     this.username = this.config.username;
     this.basic = this.config.userBasic;
+    makeObservable(this);
 
-    this.reaction(() => this.username, async () => {
+    this.reaction(() => this.username, () => {
       const icon = this.username ? 'active' : 'icon';
       updateActionIcon(icon);
     }, { fireImmediately: true });
 
+    this.reaction(() => [this.unreadNotification, this.unreadPrivateMessage], ([notification, message]) => {
+      const label = notification + message <= 0 ? '' : `${notification}/${message}`;
+      updateBadgeText(label);
+    }, { fireImmediately: true });
   }
 
   async fetchCurrentUser() {
@@ -67,7 +72,7 @@ export class User extends Reaction {
       await Promise.all([
         this.fetchUserSummary(),
         this.fetchNotification(),
-        this.fetchPrivateMessage()
+        this.fetchPrivateMessage(),
       ]);
     }
   }
@@ -96,6 +101,6 @@ export class User extends Reaction {
     const message = await this.client.listUnreadUserPrivateMessages(this.username);
     runInAction(() => {
       this.unreadPrivateMessage = message?.topic_list?.topics?.length ?? 0;
-    })
+    });
   }
 }
