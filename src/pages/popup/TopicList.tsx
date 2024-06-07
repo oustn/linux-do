@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import OpenInNew from '@mui/icons-material/OpenInNew'
 
 import type { Category, Topic } from '@src/core/type';
 import { avatarUrl, formatDate, formatNumber, handlerViewTopic } from '@src/utils';
@@ -16,6 +17,7 @@ import { avatarUrl, formatDate, formatNumber, handlerViewTopic } from '@src/util
 import { CategoryTip } from './Category';
 import { TopicOrder } from './TopicOrder.tsx';
 import { LatestTopicOrder } from '@src/core/latest-topic.ts';
+import IconButton from '@mui/material/IconButton';
 
 interface TopicListProps {
   topics: Array<Topic>;
@@ -124,7 +126,26 @@ export const TopicList = (props: TopicListProps) => {
               {
                 topics.map((topic, index) => (
                   <React.Fragment key={topic.id}>
-                    <ListItem alignItems="flex-start" disablePadding>
+                    <ListItem
+                      alignItems="flex-start"
+                      disablePadding
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="open in new"
+                          onClick={() => handlerViewTopic(topic.id, true)}
+                        >
+                          <OpenInNew />
+                        </IconButton>
+                      }
+                      sx={[
+                        {
+                          '& .MuiListItemSecondaryAction-root': {
+                            top: '24px',
+                          }
+                        }
+                      ]}
+                    >
                       <ListItemButton
                         onClick={() => handlerViewTopic(topic.id)}
                         onAuxClick={() => handlerViewTopic(topic.id, true)}
