@@ -27,7 +27,7 @@ export class Shortcut extends HTMLElement {
 
   connectedCallback() {
     const mountPoint = document.createElement('div');
-    mountPoint.setAttribute('style', 'position: fixed; top: -1000px; right: -1000px; z-index: 9999999; transform: translate3d(0, -50%, 0);');
+    mountPoint.setAttribute('style', 'position: fixed; top: -1000px; left: -1000px; z-index: 9999999; transform: translate3d(0, -50%, 0);');
     this.attachShadow({ mode: 'open' }).appendChild(mountPoint);
 
     const cache = createCache({
