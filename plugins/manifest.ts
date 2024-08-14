@@ -23,23 +23,21 @@ export function ChromeExtensionManifestPlugin(): Plugin {
       for (const file in bundle) {
         const chunk = bundle[file];
         if (chunk.type === 'chunk' && chunk.isEntry) {
-          const ref = chunk.imports[0];
-          if (ref.includes('preload-helper-')) {
-            const refChunk = bundle[ref];
-            if (refChunk.type === 'chunk') {
-              const refCode = refChunk.code;
-              const regexp = new RegExp(`import{_ as (\\w)}from".*${ref.split('/').pop()}";`, 'g');
-              const match = regexp.exec(chunk.code);
-              const refMatch = refCode.match(/export{(\w) as _};/);
-              const [, f] = match;
-              const [, r] = refMatch;
-              chunk.code = chunk.code.replace(regexp, refCode.replace(/export{(\w) as _};/, `const __${f} = ${r};`)).replace(new RegExp(`${f}\\(\\(\\)=>import`, 'g'), `__${f}(()=>import`);
-            }
-          }
           const { facadeModuleId, name } = chunk;
           const entry = entries.find(item => item.path === facadeModuleId);
           if (entry) {
             _.set(manifest, entry.key, extname(facadeModuleId) === '.html' ? `${name}.html` : `${name}.js`);
+            if (entry.key.startsWith('content_scripts')) {
+              chunk.code = `(async function(){${chunk.code.replace(/import\s*{([^}]+)}\s*from\s*["']([^"']+)["']/g, (match, imports, modulePath) => {
+                return imports.split(',').map((importStatement: string) => {
+                  const [importName, aliasName] = importStatement.trim().split(/\s+as\s+/);
+                  const alias = aliasName ? aliasName : importName;
+                  return `const ${alias} = await import("${modulePath}").then(m => m.${importName});`;
+                }).join('\n')
+              }).replace(/import\s*["']([^"']+)["'];?/g, (match: unknown, modulePath: string) => {
+                return `await import("${modulePath}");`;
+              })}})()`
+            }
             if (entry.withCss) {
               _.set(manifest, entry.key.replace('js', 'css'), chunk.viteMetadata.importedCss.values().next().value);
             }
@@ -48,6 +46,9 @@ export function ChromeExtensionManifestPlugin(): Plugin {
           icons.push(chunk.fileName);
         }
       }
+
+      _.set(manifest, 'web_accessible_resources.0.resources',
+        _.get(manifest, 'web_accessible_resources.0.resources', []).concat(['assets/*']));
 
       manifest.icons = icons.reduce<Record<string, string>>((acc, item) => {
         const match = /icons\/icon(.+)\.png$/.exec(item);
@@ -70,9 +71,7 @@ export function ChromeExtensionManifestPlugin(): Plugin {
       });
 
       const contentScripts = _.get(manifest, 'web_accessible_resources', [])
-        .map((d: { resources: string[]; }) => d.resources).flat().concat(
-          ..._.get(manifest, 'content_scripts', []).map((d: { js: string[]; }) => d.js),
-        );
+        .map((d: { resources: string[]; }) => d.resources).flat();
 
       contentScripts.forEach((file: string) => {
         Reflect.deleteProperty(bundle, file);

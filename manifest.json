@@ -27,7 +27,7 @@
   "content_scripts": [
     {
       "matches": ["https://linux.do/*"],
-      "js": ["src/contents/auto-scroll/index.ts"],
+      "js": ["src/contents/auto-scroll/index.ts", "src/contents/shortcut/index.ts"],
       "css": ["src/contents/auto-scroll/index.scss"],
       "run_at": "document_end"
     }

@@ -21,7 +21,7 @@ export function resolveEntries(contentScript = false) {
         walk(value, path ? `${path}.${key}` : key);
       });
     } else if (_.isString(value) && (_.endsWith(value, '.html') || _.endsWith(value, '.ts'))) {
-      if (contentScript && !path.includes('content_scripts') && !path.includes('web_accessible_resources')) {
+      if (contentScript && !path.includes('web_accessible_resources')) {
         return;
       }
       let name = basename(value).replace(/\.(html|ts)$/, '');
