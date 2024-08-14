@@ -34,7 +34,11 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
     console.log(info)
     const selectedText = info.selectionText?.trim();
     if (!selectedText) return
-    const newShortcuts = Array.isArray(shortcuts) ? [...shortcuts] : []
+    const newShortcuts = Array.isArray(shortcuts) ? [...shortcuts] : [
+      '谢谢分享，感谢佬',
+      'CCC，一天到晚就知道 C',
+      '来不及解释了，快上车',
+    ]
     newShortcuts.push(selectedText)
     config.updateConfig('shortcuts', Array.from(new Set(newShortcuts)))
     return Promise.resolve()
