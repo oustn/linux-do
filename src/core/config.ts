@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { action, computed, makeObservable, observable, toJS } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction, toJS } from 'mobx';
 import { Reaction } from './reaction';
 import { UserBasic } from '@src/core/type';
 
@@ -7,6 +7,7 @@ interface ConfigInterface {
   autoRefreshing: boolean;
   username: string | null;
   userBasic: UserBasic | null;
+  shortcuts: Array<string> | null
 }
 
 type keys = keyof ConfigInterface;
@@ -23,12 +24,16 @@ export class Config extends Reaction implements ConfigInterface {
   @observable.ref
   userBasic: UserBasic | null = null;
 
+  @observable
+  shortcuts: Array<string> | null = null
+
   @computed
   private get export(): ConfigInterface {
     return {
       autoRefreshing: this.autoRefreshing,
       username: this.username,
       userBasic: toJS(this.userBasic),
+      shortcuts: toJS(this.shortcuts)
     };
   }
 
@@ -54,11 +59,15 @@ export class Config extends Reaction implements ConfigInterface {
       username,
       userBasic,
       autoRefreshing,
+      shortcuts,
     } = config
 
-    this.username = username;
-    this.userBasic = userBasic;
-    this.autoRefreshing = autoRefreshing;
+    runInAction((() => {
+      this.username = username;
+      this.userBasic = userBasic;
+      this.autoRefreshing = autoRefreshing;
+      this.shortcuts = shortcuts
+    }))
   }
 
   @action
