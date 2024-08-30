@@ -95,8 +95,8 @@ export class Scroller {
   }
 
   async autoPlay() {
-    const result = await this.toTop();
-    if (!result) return;
+    // const result = await this.toTop();
+    // if (!result) return;
     const stream = document.querySelector('.post-stream');
     if (!stream) return;
     const anchor = this.getBottomAnchor();
