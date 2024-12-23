@@ -7,7 +7,7 @@ dayjs.locale('zh-cn')
 dayjs.extend(relativeTime)
 
 export function avatarUrl(template: string, size: number = 96) {
-  return template.replace(/^\//, 'https://cdn.linux.do/')
+  return template.replace(/^\//, 'https://linux.do/')
     .replace('{size}', size.toString());
 }
 
