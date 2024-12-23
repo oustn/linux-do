@@ -3,4 +3,4 @@ import { PopupView } from './Popup'
 
 import "./index.scss"
 
-render(<PopupView/>)
+render(PopupView).then()

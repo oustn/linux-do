@@ -1,49 +1,74 @@
 import { Client } from '@src/discourse/client.ts';
-import { makeObservable, observable, reaction, runInAction } from 'mobx';
+import { makeObservable, observable } from 'mobx';
+import { Config } from './config';
+import { Reaction } from './reaction';
+import { DEFAULT_ALARM, setAlarm } from '@src/utils';
+import { LatestTopic } from '@src/core/latest-topic.ts';
+import { Categories } from '@src/core/categories.ts';
+import { User } from '@src/core/user.ts';
 
-export class Runtime {
+export class Runtime extends Reaction {
   private static instance?: Runtime;
 
   static async getInstance(): Promise<Runtime> {
     if (!this.instance) {
-      this.instance = new Runtime();
+      const config = new Config();
+      await config.init();
+      this.instance = new Runtime(config);
+      await this.instance.init();
     }
     return this.instance;
   }
 
   private readonly client: Client;
 
-  private username: string | null = null;
+  @observable.ref
+  private readonly config;
 
-  constructor() {
+  @observable.ref
+  readonly user: User;
+
+  @observable.ref
+  readonly latestTopic: LatestTopic;
+
+  @observable.ref
+  readonly categories: Categories;
+
+  constructor(config: Config) {
+    super();
+    this.config = config
     this.client = new Client('https://linux.do');
-    makeObservable<Runtime>(this, {
-      username: observable,
-    });
-    console.log(this.client)
-    this.init();
+    this.latestTopic = new LatestTopic(this.client);
+    this.categories = new Categories(this.client);
+    this.user = new User(this.client, this.config);
+
+    makeObservable(this)
   }
 
-  private init() {
-    reaction(() => this.username, async () => {
-      const icon = this.username ? 'active' : 'icon';
-      if (this.username) {
-        this.fetchSummary().then();
+  private async init() {
+    await setAlarm();
+    // Alarm 监听
+    chrome.alarms.onAlarm.addListener((alarm) => {
+      if (alarm.name === DEFAULT_ALARM) {
+        this.refresh();
       }
-      await chrome.action.setIcon({
-        path: `icons/${icon}128.png`,
-      });
-    }, { fireImmediately: true });
-
-    this.client.getCurrentUsername().then((username) => {
-      runInAction(() => {
-        this.username = username;
-      });
     });
+
+    Promise.all([
+      this.user.fetchCurrentUser(),
+      this.categories.fetch(),
+      this.latestTopic.fetch(),
+    ]).then()
   }
 
-  private async fetchSummary() {
-    const summary = await this.client.getUserSummary(this.username!);
-    console.log(summary);
+  depose() {
+    super.depose();
+    this.config.depose();
+  }
+
+  private refresh() {
+    Promise.all([
+      this.user.fetchCurrentUser()
+    ]).then();
   }
 }

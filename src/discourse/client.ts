@@ -19,12 +19,12 @@ import {
   UnprocessableEntityError,
 } from '@src/discourse/errors.ts';
 import type { MediaType } from 'openapi-typescript-helpers';
-import { Get, Param } from '@src/discourse/decorators';
+import { Get, Param, Override } from '@src/discourse/decorators';
 
 export class Client extends ApiClient {
   private readonly client: ReturnType<typeof createClient<paths>>;
 
-  private TIMEOUT = 30;
+  private TIMEOUT = 60;
 
   private get headers() {
     const headers = new Headers();
@@ -56,7 +56,7 @@ export class Client extends ApiClient {
       throw new Error('Invalid fetch call');
     }
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.TIMEOUT * 1000);
+    const timeout = setTimeout(() => controller.abort('Timeout'), this.TIMEOUT * 1000);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const data = await this.client[method.toUpperCase()](path, {
@@ -115,4 +115,26 @@ export class Client extends ApiClient {
   ) {
     return this.fetch<paths, 'get', '/u/{username}/summary.json'>();
   }
+
+  @Override('getNotifications', {
+    params: {
+      query: {
+        filter: 'unread'
+      }
+    },
+  })
+  getUnreadNotifications() {
+    return this.getNotifications()
+  }
+
+  @Get('/topics/private-messages-unread/{username}.json')
+  listUnreadUserPrivateMessages(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('username') _username: ApiParams<paths, 'get', '/topics/private-messages/{username}.json'>['username']
+  ) {
+    return this.fetch<paths, 'get', '/topics/private-messages/{username}.json'>()
+  }
 }
+
+export type ApiReturnType<T extends keyof InstanceType<typeof Client>> =
+  Exclude<Awaited<ReturnType<InstanceType<typeof Client>[T]>>, undefined>

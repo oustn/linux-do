@@ -1,0 +1,1 @@
+export const URL_CHANGE_MESSAGE = 'URL_CHANGE_MESSAGE';

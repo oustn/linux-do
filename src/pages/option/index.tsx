@@ -3,4 +3,4 @@ import { OptionView } from './Option'
 
 import "./index.scss"
 
-render(<OptionView/>)
+render(OptionView).then()
