@@ -46,7 +46,8 @@
     "vite": "^4.4.5",
     "vite-plugin-zip-pack": "^1.0.6",
     "openapi-typescript": "^6.7.6",
-    "undici": "^6.18.2"
+    "undici": "^6.18.2",
+    "crx": "^5.0.1"
   },
   "volta": {
     "node": "20.13.1",

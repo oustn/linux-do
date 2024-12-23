@@ -9,3 +9,5 @@ export EXTENSION_RELEASE_VERSION=$metadata
 export EXTENSION_VERSION=$version
 
 npm run build
+
+npx crx pack ./dist -o ./archives/linux-do-"$version".crx -p ./linux-do.pem
