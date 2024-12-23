@@ -4,6 +4,8 @@ import _ from 'lodash';
 import Manifest from '../manifest.json';
 import { cleanArray, resolveEntries } from '../lib/utils';
 
+export {resolveEntries}
+
 export function ChromeExtensionManifestPlugin(): Plugin {
   const manifest: chrome.runtime.ManifestV3 = JSON.parse(JSON.stringify(Manifest));
 

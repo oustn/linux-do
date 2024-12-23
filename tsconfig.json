@@ -29,7 +29,9 @@
     }
   },
   "include": [
-    "src"
+    "src",
+    "./vite.config.ts",
+    "./vite.content.config.ts"
   ],
   "references": [
     {
