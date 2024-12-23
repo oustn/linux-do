@@ -6,10 +6,12 @@ import { resolveEntries } from './utils';
 const libs: LibraryOptions[] = resolveEntries(true).map((item) => ({
   name: _.camelCase(item.name),
   entry: item.path,
-  formats: ['es'],
+  formats: ['iife'],
   fileName: () => `${item.name}.js`,
   emitAssets: true,
 }));
+
+console.log(libs);
 
 (async () => {
   await Promise.all([
