@@ -1,4 +1,5 @@
 import createClient, { FetchResponse, MaybeOptionalInit } from 'openapi-fetch';
+import * as cheerio from 'cheerio';
 
 import type { paths } from './schema';
 
@@ -19,7 +20,7 @@ import {
   UnprocessableEntityError,
 } from '@src/discourse/errors.ts';
 import type { MediaType } from 'openapi-typescript-helpers';
-import { Get, Param, Override } from '@src/discourse/decorators';
+import { Get, Param, Override, Post, Header, Body } from '@src/discourse/decorators';
 
 export class Client extends ApiClient {
   private readonly client: ReturnType<typeof createClient<paths>>;
@@ -39,7 +40,7 @@ export class Client extends ApiClient {
   }
 
   constructor(
-    host: string,
+    private readonly host: string,
     private readonly apiKey?: string,
     private readonly apiUsername?: string,
   ) {
@@ -51,6 +52,7 @@ export class Client extends ApiClient {
     method?: M,
     path?: P,
     init?: ApiInits<Paths, M, P>,
+    // @ts-expect-error fuck
   ): Promise<FetchResponse<Paths[P][M], MaybeOptionalInit<Paths[P], M>, MediaType>> {
     if (!method || !path || !init) {
       throw new Error('Invalid fetch call');
@@ -119,20 +121,39 @@ export class Client extends ApiClient {
   @Override('getNotifications', {
     params: {
       query: {
-        filter: 'unread'
-      }
+        filter: 'unread',
+      },
     },
   })
   getUnreadNotifications() {
-    return this.getNotifications()
+    return this.getNotifications();
   }
 
   @Get('/topics/private-messages-unread/{username}.json')
   listUnreadUserPrivateMessages(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Param('username') _username: ApiParams<paths, 'get', '/topics/private-messages/{username}.json'>['username']
+    @Param('username') _username: ApiParams<paths, 'get', '/topics/private-messages/{username}.json'>['username'],
   ) {
-    return this.fetch<paths, 'get', '/topics/private-messages/{username}.json'>()
+    return this.fetch<paths, 'get', '/topics/private-messages/{username}.json'>();
+  }
+
+  @Post('/topics/timings')
+  timings(
+    @Body() _body: ApiParams<paths, 'post', '/topics/timings'>,
+    @Header('x-csrf-token') _csrfToken: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Header('content-type') _contentType: string = 'application/x-www-form-urlencoded; charset=UTF-8',
+  ) {
+    return this.fetch<paths, 'post', '/topics/timings'>();
+  }
+
+  async getCsrfToken(id: number | string) {
+    const response = await fetch(new URL(`/t/topic/${id}`, this.host));
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const meta = $('meta[name=csrf-token]');
+    if (!meta.length) return '';
+    return meta.attr('content') || '';
   }
 }
 

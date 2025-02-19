@@ -22,7 +22,11 @@
   "permissions": [
     "storage",
     "contextMenus",
-    "alarms"
+    "alarms",
+    "declarativeNetRequest",
+    "cookies",
+    "tabs",
+    "notifications"
   ],
   "content_scripts": [
     {

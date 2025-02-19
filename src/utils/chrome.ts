@@ -44,3 +44,25 @@ export async function handlerViewTopic(id?: number, inactive = false) {
 export async function handlerLogin() {
   return goto(`https://linux.do/login`)
 }
+
+export function removePartitionCookies() {
+  return new Promise((resolve) => {
+    // @ts-expect-error lower version error
+    chrome.cookies.getAll({ domain: 'linux.do', partitionKey: { topLevelSite: 'https://linux.do'} }, (cookies) => {
+      Promise.all(cookies.map(cookie => new Promise((res) => {
+        chrome.cookies.set({
+          url: 'https://linux.do',
+          domain: cookie.domain,
+          name: cookie.name,
+          storeId: cookie.storeId,
+          value: cookie.value,
+          expirationDate: cookie.expirationDate,
+          secure: cookie.secure,
+          sameSite: cookie.sameSite,
+          path: cookie.path,
+          httpOnly: cookie.httpOnly,
+        }, res)
+      }))).then(resolve)
+    })
+  })
+}

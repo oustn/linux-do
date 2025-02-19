@@ -1,1 +1,5 @@
 export const URL_CHANGE_MESSAGE = 'URL_CHANGE_MESSAGE';
+
+export const READ_TOPIC = 'READ_TOPIC'
+
+export const READ_TOPIC_BATCH = 'READ_TOPIC_BATCH'

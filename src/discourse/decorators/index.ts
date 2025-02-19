@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import _ from 'lodash';
 
-type ParameterType = 'param' | 'query' | 'body';
+type ParameterType = 'param' | 'query' | 'body' | 'header';
 
 const ParameterMetadataKey = Symbol('ParameterMetadataKey');
 const OverrideMetadataKey = Symbol('OverrideMetadataKey');
@@ -26,6 +26,8 @@ interface Init {
       [key: string]: unknown;
     }
   };
+
+  headers?: Headers
 }
 
 interface Client {
@@ -60,6 +62,10 @@ export function Body(name?: string): ParameterDecorator {
   return ParameterDecorator('body', name);
 }
 
+export function Header(name: string): ParameterDecorator {
+  return HeaderDecorator(name);
+}
+
 function MethodDecorator(type: string, path: string): MethodDecorator {
   return (target: object, propertyKey: string | symbol | undefined, descriptor: PropertyDescriptor) => {
     descriptor.value = async function(...rest: unknown[]) {
@@ -87,6 +93,9 @@ function MethodDecorator(type: string, path: string): MethodDecorator {
           } else {
             init.body = rest[parameter.index];
           }
+        } else if (parameter.type === 'header') {
+          init.headers = init.headers || new Headers()
+          init.headers?.append(parameter.name!, rest[parameter.index] as string)
         }
       }
 
@@ -108,6 +117,14 @@ function MethodDecorator(type: string, path: string): MethodDecorator {
         init.body = undefined
       }
 
+      if (init.headers && init.headers.get('Content-Type')?.includes('www-form-urlencoded')) {
+        const formData = new FormData()
+        Object.entries(init.body as Record<string, unknown>).forEach(([key, value]) => {
+          formData.append(key, value as string)
+        })
+        init.body = formData
+      }
+
       return (this as Client).fetch(type, path, init);
     };
   };
@@ -119,6 +136,19 @@ function ParameterDecorator(type: ParameterType, name?: string): ParameterDecora
     const parameters: ParameterPayload[] = Reflect.getOwnMetadata(ParameterMetadataKey, target, propertyKey!) || [];
     parameters.push({
       type,
+      name,
+      index: parameterIndex,
+    });
+    Reflect.defineMetadata(ParameterMetadataKey, parameters, target, propertyKey!);
+  };
+}
+
+function HeaderDecorator(name: string): ParameterDecorator {
+  return (target: object, propertyKey: string | symbol | undefined, parameterIndex: number) => {
+    if (!propertyKey) return;
+    const parameters: ParameterPayload[] = Reflect.getOwnMetadata(ParameterMetadataKey, target, propertyKey!) || [];
+    parameters.push({
+      type: 'header',
       name,
       index: parameterIndex,
     });

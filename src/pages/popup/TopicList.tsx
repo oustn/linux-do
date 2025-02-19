@@ -9,10 +9,18 @@ import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import OpenInNew from '@mui/icons-material/OpenInNew'
+import OpenInNew from '@mui/icons-material/OpenInNew';
+import Button from '@mui/material/Button'
 
 import type { Category, Topic } from '@src/core/type';
-import { avatarUrl, formatDate, formatNumber, handlerViewTopic } from '@src/utils';
+import {
+  avatarUrl,
+  formatDate,
+  formatNumber,
+  handlerViewTopic,
+  handleReadWithTopic,
+  handleReadWithBatch,
+} from '@src/utils';
 
 import { CategoryTip } from './Category';
 import { TopicOrder } from './TopicOrder.tsx';
@@ -27,7 +35,18 @@ interface TopicListProps {
   loading: boolean;
 }
 
-function Partial({ title, value }: { title: string, value?: string | number }) {
+function Partial({ title, value, action = false, onClick }: {
+  title: string,
+  value?: string | number,
+  action?: boolean,
+  onClick?: { (): void }
+}) {
+  const handleClick = (e: unknown) => {
+    const event: MouseEvent = e as MouseEvent
+    event.preventDefault()
+    event.stopPropagation()
+    onClick && onClick()
+  }
   return (
     <Box
       lineHeight="1em"
@@ -35,21 +54,31 @@ function Partial({ title, value }: { title: string, value?: string | number }) {
       flexShrink={0}
       textAlign="center"
     >
-      <Typography
-        variant="caption"
-        color="text.secondary"
-      >
-        {title}
-      </Typography>
-      <Typography
-        variant="body2"
-        color="text.primary"
-        sx={{
-          fontWeight: 'bold',
-        }}
-      >
-        {value}
-      </Typography>
+      {
+        action && (
+          <Button size="small" onClick={handleClick}>{ title }</Button>
+        )
+      }
+      {
+        !action && (<>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+            >
+              {title}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.primary"
+              sx={{
+                fontWeight: 'bold',
+              }}
+            >
+              {value}
+            </Typography>
+          </>
+        )
+      }
     </Box>
   );
 }
@@ -114,6 +143,7 @@ export const TopicList = (props: TopicListProps) => {
           onChange={(value) => handleFetch(value as LatestTopicOrder)}
           loading={loading}
         />
+        <Button variant="text" fullWidth onClick={() => handleReadWithBatch(order)}>一键已读</Button>
       </Box>
       <Box
         minHeight="0"
@@ -122,7 +152,7 @@ export const TopicList = (props: TopicListProps) => {
       >
         {
           !loading && (
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <List sx={{ width: '100%', bgcolor: 'background.paper', pt: 0 }}>
               {
                 topics.map((topic, index) => (
                   <React.Fragment key={topic.id}>
@@ -142,8 +172,8 @@ export const TopicList = (props: TopicListProps) => {
                         {
                           '& .MuiListItemSecondaryAction-root': {
                             top: '24px',
-                          }
-                        }
+                          },
+                        },
                       ]}
                     >
                       <ListItemButton
@@ -187,7 +217,7 @@ export const TopicList = (props: TopicListProps) => {
                               <Typography
                                 variant="body1"
                                 sx={{
-                                  mb: 1
+                                  mb: 1,
                                 }}
                               >
                                 {topic.title}
@@ -213,6 +243,7 @@ export const TopicList = (props: TopicListProps) => {
                             direction="row"
                             divider={<Divider orientation="vertical" flexItem />}
                           >
+                            <Partial title="标记已读" action onClick={() => handleReadWithTopic(topic)} />
                             <Partial title="回复" value={formatNumber(topic.posts_count)} />
                             <Partial title="浏览量" value={formatNumber(topic.views)} />
                             <Partial title="活动" value={formatDate(topic.last_posted_at!)} />

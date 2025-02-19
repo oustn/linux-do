@@ -8,6 +8,10 @@ export interface paths extends openapi {
   "/u/{username}/summary.json": {
     get: operations["getUserSummary"];
   };
+
+  "/topics/timings": {
+    post: operations["timings"];
+  }
 }
 
 interface operations {
@@ -55,6 +59,31 @@ interface operations {
               name: string
               username: string
             }>
+          }
+        }
+      }
+    }
+  },
+  timings: {
+    requestBody?: {
+      content: {
+        "application/json": {
+          timings: Record<string, number>
+          topic_time: number | string;
+          topic_id: number | string
+        };
+      };
+    };
+    responses: {
+      /** @description success response */
+      200: {
+        content: {
+          "application/json": {
+            "about": {
+              "stats": {
+                "topics_last_day": number;
+              }
+            }
           }
         }
       }
