@@ -46,7 +46,7 @@ export class Timing {
 
   private csrfToken = '';
 
-  private tab: chrome.tabs.Tab | null = null;
+  private tabs: Array<chrome.tabs.Tab> = [];
 
   private processing = false;
 
@@ -121,11 +121,11 @@ export class Timing {
 
       if (!response.ok) {
         const message = await response.text();
-        if (message.includes('BAD CSRF') || message.includes('Just a moment...')) {
-          this.tab = this.tab || await chrome.tabs.create({
+        if (message.includes('BAD CSRF') || message.includes('Just a moment...') || response.status === 403) {
+          this.tabs.push(await chrome.tabs.create({
             url: `https://linux.do/t/topic/${topicID}`,
             active: false,
-          });
+          }));
 
           await wait(5000);
 
@@ -135,10 +135,12 @@ export class Timing {
       }
 
       this.notification(`成功处理回复 ${startId} - ${endId}`, 'SUCCESS');
-      if (this.tab && this.tab.id) {
-        await chrome.tabs.remove(this.tab.id);
-        this.tab = null;
-      }
+      await Promise.all(this.tabs.map(tab => {
+        if (tab && tab.id) {
+          return chrome.tabs.remove(tab.id);
+        }
+      }))
+      this.tabs = []
       return true;
     } catch (error) {
       this.notification(`处理回复 ${startId} - ${endId} 失败: ${error} `, 'ERROR');
