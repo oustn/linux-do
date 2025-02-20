@@ -28,7 +28,7 @@ export function formatDate(date: string) {
 
 function getPort() {
   if (!port) {
-    port = chrome.runtime.connect({ name: 'popup_connection' });
+    port = chrome.runtime.connect();
     port.onDisconnect.addListener(() => {
       port = null
     });

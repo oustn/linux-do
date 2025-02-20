@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 import Button from '@mui/material/Button'
+import Badge from '@mui/material/Badge';
 
 import type { Category, Topic } from '@src/core/type';
 import {
@@ -35,11 +36,12 @@ interface TopicListProps {
   loading: boolean;
 }
 
-function Partial({ title, value, action = false, onClick }: {
+function Partial({ title, value, action = false, onClick, disabled = false }: {
   title: string,
   value?: string | number,
   action?: boolean,
-  onClick?: { (): void }
+  onClick?: { (): void },
+  disabled?: boolean
 }) {
   const handleClick = (e: unknown) => {
     const event: MouseEvent = e as MouseEvent
@@ -56,7 +58,7 @@ function Partial({ title, value, action = false, onClick }: {
     >
       {
         action && (
-          <Button size="small" onClick={handleClick}>{ title }</Button>
+          <Button disabled={disabled} size="small" onClick={handleClick}>{ title }</Button>
         )
       }
       {
@@ -214,14 +216,16 @@ export const TopicList = (props: TopicListProps) => {
                         >
                           <ListItemText
                             primary={
-                              <Typography
-                                variant="body1"
-                                sx={{
-                                  mb: 1,
-                                }}
-                              >
-                                {topic.title}
-                              </Typography>
+                              <Badge color="secondary" variant="dot" invisible={!topic.unseen && !topic.unread_posts}>
+                                <Typography
+                                  variant="body1"
+                                  sx={{
+                                    mb: 1,
+                                  }}
+                                >
+                                  {topic.title}
+                                </Typography>
+                              </Badge>
                             }
                             secondary={
                               <React.Fragment>
@@ -243,7 +247,12 @@ export const TopicList = (props: TopicListProps) => {
                             direction="row"
                             divider={<Divider orientation="vertical" flexItem />}
                           >
-                            <Partial title="标记已读" action onClick={() => handleReadWithTopic(topic)} />
+                            <Partial
+                              title="标记已读"
+                              action
+                              onClick={() => handleReadWithTopic(topic)}
+                              disabled={!topic.unseen && !topic.unread_posts}
+                            />
                             <Partial title="回复" value={formatNumber(topic.posts_count)} />
                             <Partial title="浏览量" value={formatNumber(topic.views)} />
                             <Partial title="活动" value={formatDate(topic.last_posted_at!)} />

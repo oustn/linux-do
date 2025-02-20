@@ -30,24 +30,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   const r = await Runtime.getInstance();
   console.log(r);
-
-  chrome.runtime.onConnect.addListener((port) => {
-    // 监听消息
-    port.onMessage.addListener(async (message, p) => {
-      const { action, topic, order } = message as { action: string; topic: Topic, order: LatestTopicOrder };
-      switch (action) {
-        case READ_TOPIC: {
-          await r.timing.timing(topic);
-          break;
-        }
-        case READ_TOPIC_BATCH: {
-          await r.timing.timingBatch(order);
-          break;
-        }
-      }
-      p.disconnect();
-    });
-  });
 });
 
 chrome.contextMenus.onClicked.addListener(async (info) => {
@@ -85,4 +67,24 @@ chrome.tabs.onUpdated.addListener(async (_, changeInfo) => {
 chrome.tabs.onActivated.addListener(async () => {
   // 重新加载 url / config
   await removePartitionCookies();
+});
+
+chrome.runtime.onConnect.addListener(async (port) => {
+  const r = await Runtime.getInstance();
+
+  // 监听消息
+  port.onMessage.addListener(async (message, p) => {
+    const { action, topic, order } = message as { action: string; topic: Topic, order: LatestTopicOrder };
+    switch (action) {
+      case READ_TOPIC: {
+        await r.timing.timing(topic);
+        break;
+      }
+      case READ_TOPIC_BATCH: {
+        await r.timing.timingBatch(order);
+        break;
+      }
+    }
+    p.disconnect();
+  });
 });

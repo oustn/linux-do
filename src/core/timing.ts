@@ -166,10 +166,11 @@ export class Timing {
 
   async timing(topic: Topic) {
     if (this.processing) return;
-    this.processing = true;
-    const { posts_count: totalReplies = 0, id = 0 } = topic;
+    const { posts_count: totalReplies = 0, id = 0, unseen, unread_posts } = topic;
     if (!totalReplies || !id) return;
+    if (!unseen && !unread_posts) return;
 
+    this.processing = true;
     const csrfToken = await this.getCsrfToken(id);
 
     this.notification(`开始自动阅读，共${totalReplies}条回复。 \n\n ${topic.title!}`);
