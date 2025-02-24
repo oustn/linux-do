@@ -141,7 +141,9 @@ export class Timing {
             return chrome.tabs.remove(tab.id);
           }
         }))
-      } catch() {}
+      } catch(e) {
+        // do nothing
+      }
       this.tabs = []
       return true;
     } catch (error) {
