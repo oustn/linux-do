@@ -135,11 +135,13 @@ export class Timing {
       }
 
       this.notification(`成功处理回复 ${startId} - ${endId}`, 'SUCCESS');
-      await Promise.all(this.tabs.map(tab => {
-        if (tab && tab.id) {
-          return chrome.tabs.remove(tab.id);
-        }
-      }))
+      try {
+        await Promise.all(this.tabs.map(tab => {
+          if (tab && tab.id) {
+            return chrome.tabs.remove(tab.id);
+          }
+        }))
+      } catch() {}
       this.tabs = []
       return true;
     } catch (error) {
