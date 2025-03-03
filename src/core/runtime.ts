@@ -7,6 +7,7 @@ import { LatestTopic } from '@src/core/latest-topic.ts';
 import { Categories } from '@src/core/categories.ts';
 import { User } from '@src/core/user.ts';
 import { Timing } from '@src/core/timing'
+import * as cheerio from 'cheerio';
 
 export class Runtime extends Reaction {
   private static instance?: Runtime;
@@ -76,5 +77,26 @@ export class Runtime extends Reaction {
     Promise.all([
       this.user.fetchCurrentUser()
     ]).then();
+  }
+
+  async fetchInfo() {
+    const response = await fetch('https://connect.linux.do/')
+    const html = await response.text()
+    const $ = cheerio.load(html)
+    const rows:  Array<{ label: string, value: string, expect: string}> = [];
+
+    $('table tbody tr').each((_index, element) => {
+      const cells = $(element).find('td');
+      if (cells.length === 3) {
+        const row = {
+          label: $(cells[0]).text().trim(),
+          value: $(cells[1]).text().trim(),
+          expect: $(cells[2]).text().trim()
+        };
+        rows.push(row);
+      }
+    });
+
+    return rows;
   }
 }
