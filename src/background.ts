@@ -3,7 +3,7 @@ import { Config } from '@src/core/config.ts';
 import { rules } from './rules';
 import { Topic } from './core/type';
 import { READ_TOPIC, READ_TOPIC_BATCH } from '@src/constant.ts';
-import { removePartitionCookies } from '@src/utils';
+import { DEFAULT_ALARM, removePartitionCookies, TIMING_ALARM } from '@src/utils';
 import { LatestTopicOrder } from '@src/core/latest-topic.ts';
 
 const SETTING_MENU = 'setting_menu';
@@ -87,4 +87,28 @@ chrome.runtime.onConnect.addListener(async (port) => {
     }
     p.disconnect();
   });
+});
+
+chrome.notifications.onClicked.addListener(async () => {
+  const data = await chrome.storage.local.get('timing-notification');
+  const topic: Topic = data['timing-notification'];
+  if (!data) return;
+  await chrome.tabs.create({ url: `https://linux.do/t/topic/${topic.id}` });
+});
+
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  const r = await Runtime.getInstance();
+
+  if (alarm.name === DEFAULT_ALARM) {
+    r.refresh();
+    return;
+  }
+
+  if (alarm.name === TIMING_ALARM) {
+    const hour = new Date().getHours();
+    if (hour < 7 || hour >= 21) return;
+    console.log('自动阅读');
+    await r.timing.timingBatch();
+  }
 });

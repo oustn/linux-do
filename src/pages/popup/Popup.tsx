@@ -28,6 +28,7 @@ const Popup = ({ runtime }: PopupProps) => {
               unreadPrivateMessage={runtime.user.export.unreadPrivateMessage}
             />
             <TopicList
+              isLogin={runtime.user.export.isLogin}
               topics={runtime.latestTopic.export.topics}
               categories={runtime.categories.export.categories}
               order={runtime.latestTopic.export.order}

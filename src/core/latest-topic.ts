@@ -52,14 +52,20 @@ export class LatestTopic {
     if (order) {
       this.order = order;
     }
-    const topics = await this.client.listLatestTopics(this.order);
-    const users: User[] = topics?.users || [];
-    runInAction(() => {
-      this.topics.replace((topics?.topic_list?.topics || []).map((topic) => ({
-        ...topic,
-        author: users.find((user) => user.id === topic?.posters?.[0].user_id)!,
-      })));
-      this.loading = false;
-    });
+    try {
+      const topics = await this.client.listLatestTopics(this.order);
+      const users: User[] = topics?.users || [];
+      runInAction(() => {
+        this.topics.replace((topics?.topic_list?.topics || []).map((topic) => ({
+          ...topic,
+          author: users.find((user) => user.id === topic?.posters?.[0].user_id)!,
+        })));
+        this.loading = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loading = false
+      })
+    }
   }
 }

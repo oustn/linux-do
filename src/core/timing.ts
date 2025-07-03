@@ -48,7 +48,7 @@ export class Timing {
 
   private tabs: Array<chrome.tabs.Tab> = [];
 
-  private processing = false;
+  private processing: Topic | null = null;
 
   private readonly startId = 'timing-notification';
 
@@ -134,27 +134,27 @@ export class Timing {
         throw new Error(`HTTP请求失败，状态码：${response.status}`);
       }
 
-      this.notification(`成功处理回复 ${startId} - ${endId}`, 'SUCCESS');
+      this.notification(`成功处理回复 ${startId} - ${endId}`, 'SUCCESS ✅');
       try {
         await Promise.all(this.tabs.map(tab => {
           if (tab && tab.id) {
             return chrome.tabs.remove(tab.id);
           }
-        }))
-      } catch(e) {
+        }));
+      } catch (e) {
         // do nothing
       }
-      this.tabs = []
+      this.tabs = [];
       return true;
     } catch (error) {
-      this.notification(`处理回复 ${startId} - ${endId} 失败: ${error} `, 'ERROR');
+      this.notification(`处理回复 ${startId} - ${endId} 失败: ${error} `, 'ERROR ❌');
 
       if (retryCount > 0) {
-        this.notification(`重试处理回复 ${startId} - ${endId}，剩余重试次数：${retryCount}`, 'WARNING');
+        this.notification(`重试处理回复 ${startId} - ${endId}，剩余重试次数：${retryCount}`, 'WARNING ⚠️');
         await wait(2000);
         return this.sendBatch(topicID, csrfToken, startId, endId, retryCount - 1);
       } else {
-        this.notification(`处理回复 ${startId} - ${endId} 失败，自动跳过`, 'ERROR');
+        this.notification(`处理回复 ${startId} - ${endId} 失败，自动跳过`, 'ERROR ❌');
         return false;
       }
     }
@@ -176,10 +176,11 @@ export class Timing {
     if (!totalReplies || !id) return;
     if (!unseen && !unread_posts) return;
 
-    this.processing = true;
+    this.processing = topic;
+    await chrome.storage.local.set({ [this.startId]: topic });
     const csrfToken = await this.getCsrfToken(id);
 
-    this.notification(`开始自动阅读，共${totalReplies}条回复。 \n\n ${topic.title!}`);
+    this.notification(`🚀 开始自动阅读，共${totalReplies}条回复。 \n\n ${topic.title!}`);
     for (let i = 1; i <= totalReplies;) {
       const batchSize = getRandomInt(this.minReqSize, this.maxReqSize);
       const startId = i;
@@ -190,23 +191,25 @@ export class Timing {
         const delay = this.baseDelay + getRandomInt(0, this.randomDelayRange);
         await wait(delay);
       } else {
-        this.notification(`自动阅读失败，已完成${i}条阅读。\n\n ${topic.title!}`);
-        this.processing = false;
+        this.notification(`自动阅读失败 ❌，已完成${i}条阅读。\n\n ${topic.title!}`);
+        await chrome.storage.local.set({ [this.startId]: null });
+        this.processing = null;
         return;
       }
 
       i = endId + 1;
     }
-    this.notification(`自动阅读已完成。\n\n ${topic.title!}`);
-    this.processing = false;
+    this.notification(`自动阅读已完成 ✅。\n\n ${topic.title!}`);
+    this.processing = null;
+    await chrome.storage.local.set({ [this.startId]: null });
   }
 
-  async timingBatch(order: LatestTopicOrder) {
-    const topics = await this.fetchTopics(order)
-    if (!topics.length) return
+  async timingBatch(order: LatestTopicOrder = LatestTopicOrder.created) {
+    const topics = await this.fetchTopics(order);
+    if (!topics.length) return;
     for (let i = 0; i < topics.length; i++) {
-      await this.timing(topics[i])
-      await wait(2000)
+      await this.timing(topics[i]);
+      await wait(2000);
     }
   }
 }

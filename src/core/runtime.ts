@@ -2,7 +2,7 @@ import { Client } from '@src/discourse/client.ts';
 import { makeObservable, observable } from 'mobx';
 import { Config } from './config';
 import { Reaction } from './reaction';
-import { DEFAULT_ALARM, removePartitionCookies, setAlarm } from '@src/utils';
+import { removePartitionCookies, setAlarm, TIMING_ALARM } from '@src/utils';
 import { LatestTopic } from '@src/core/latest-topic.ts';
 import { Categories } from '@src/core/categories.ts';
 import { User } from '@src/core/user.ts';
@@ -53,13 +53,11 @@ export class Runtime extends Reaction {
 
   private async init() {
     await setAlarm();
+    await setAlarm(TIMING_ALARM, {
+      periodInMinutes: 60
+    })
     await removePartitionCookies()
     // Alarm 监听
-    chrome.alarms.onAlarm.addListener((alarm) => {
-      if (alarm.name === DEFAULT_ALARM) {
-        this.refresh();
-      }
-    });
 
     Promise.all([
       this.user.fetchCurrentUser(),
@@ -73,7 +71,7 @@ export class Runtime extends Reaction {
     this.config.depose();
   }
 
-  private refresh() {
+  refresh() {
     Promise.all([
       this.user.fetchCurrentUser()
     ]).then();

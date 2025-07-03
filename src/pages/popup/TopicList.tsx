@@ -34,6 +34,7 @@ interface TopicListProps {
   order: LatestTopicOrder;
   handleFetch: (order: LatestTopicOrder) => void;
   loading: boolean;
+  isLogin: boolean;
 }
 
 function Partial({ title, value, action = false, onClick, disabled = false }: {
@@ -129,7 +130,7 @@ const FILTER: Array<{
 ];
 
 export const TopicList = (props: TopicListProps) => {
-  const { topics, categories, order, handleFetch, loading } = props;
+  const { topics, categories, order, handleFetch, loading, isLogin } = props;
 
   return (
     <Box
@@ -145,7 +146,11 @@ export const TopicList = (props: TopicListProps) => {
           onChange={(value) => handleFetch(value as LatestTopicOrder)}
           loading={loading}
         />
-        <Button variant="text" fullWidth onClick={() => handleReadWithBatch(order)}>一键已读</Button>
+        {
+          isLogin && (
+            <Button variant="text" fullWidth onClick={() => handleReadWithBatch(order)}>一键已读</Button>
+          )
+        }
       </Box>
       <Box
         minHeight="0"
@@ -190,6 +195,7 @@ export const TopicList = (props: TopicListProps) => {
                           alignItems="center"
                           flexDirection="column"
                           marginRight={2}
+                          overflow="hidden"
                         >
                           <ListItemAvatar
                             sx={{
@@ -207,7 +213,7 @@ export const TopicList = (props: TopicListProps) => {
                             color="text.primary"
                             textAlign="center"
                           >
-                            {topic.author.name || topic.author.username}
+                            {topic.author.name?.trim() || topic.author.username}
                           </Typography>
                         </Box>
                         <Box
@@ -247,12 +253,16 @@ export const TopicList = (props: TopicListProps) => {
                             direction="row"
                             divider={<Divider orientation="vertical" flexItem />}
                           >
-                            <Partial
-                              title="标记已读"
-                              action
-                              onClick={() => handleReadWithTopic(topic)}
-                              disabled={!topic.unseen && !topic.unread_posts}
-                            />
+                            {
+                              isLogin && (
+                                <Partial
+                                  title="标记已读"
+                                  action
+                                  onClick={() => handleReadWithTopic(topic)}
+                                  disabled={!topic.unseen && !topic.unread_posts}
+                                />
+                              )
+                            }
                             <Partial title="回复" value={formatNumber(topic.posts_count)} />
                             <Partial title="浏览量" value={formatNumber(topic.views)} />
                             <Partial title="活动" value={formatDate(topic.last_posted_at!)} />

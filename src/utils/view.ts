@@ -26,18 +26,22 @@ export function formatDate(date: string) {
   return dayjs(date).toNow(true);
 }
 
-function getPort() {
-  if (!port) {
-    port = chrome.runtime.connect();
-    port.onDisconnect.addListener(() => {
-      port = null
+function getPort(): Promise<chrome.runtime.Port> {
+  return new Promise((resolve) => {
+    if (!port) {
+      port = chrome.runtime.connect();
+      port.onDisconnect.addListener(() => {
+        port = null;
+      });
+    }
+    setTimeout(() => {
+      resolve(port!);
     });
-  }
-  return port;
+  });
 }
 
 export async function handleReadWithTopic(topic: Topic) {
-  const port = getPort();
+  const port = await getPort();
 
   port.postMessage({
     action: READ_TOPIC,
@@ -46,7 +50,7 @@ export async function handleReadWithTopic(topic: Topic) {
 }
 
 export async function handleReadWithBatch(order: LatestTopicOrder) {
-  const port = getPort();
+  const port = await getPort();
   port.postMessage({
     action: READ_TOPIC_BATCH,
     order,

@@ -1,4 +1,5 @@
 export const DEFAULT_ALARM = 'linux.do.refresh';
+export const TIMING_ALARM = 'linux.do.timing';
 
 export function updateActionIcon(icon: string) {
   chrome.action.setIcon({
@@ -17,7 +18,7 @@ export function clearBadgeText() {
 }
 
 export async function setAlarm(name: string = DEFAULT_ALARM, options: chrome.alarms.AlarmCreateInfo = {
-  periodInMinutes: 1,
+  periodInMinutes: 5,
 
 }) {
   const alarm = await chrome.alarms.get(name);
