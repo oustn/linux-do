@@ -10,8 +10,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import OpenInNew from '@mui/icons-material/OpenInNew';
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt'
+import MoreIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import MenuItem from '@mui/material/MenuItem';
 
 import type { Category, Topic } from '@src/core/type';
 import {
@@ -26,7 +32,7 @@ import {
 import { CategoryTip } from './Category';
 import { TopicOrder } from './TopicOrder.tsx';
 import { LatestTopicOrder } from '@src/core/latest-topic.ts';
-import IconButton from '@mui/material/IconButton';
+import Emotion from '@src/pages/popup/Emotion.tsx';
 
 interface TopicListProps {
   topics: Array<Topic>;
@@ -45,11 +51,11 @@ function Partial({ title, value, action = false, onClick, disabled = false }: {
   disabled?: boolean
 }) {
   const handleClick = (e: unknown) => {
-    const event: MouseEvent = e as MouseEvent
-    event.preventDefault()
-    event.stopPropagation()
-    onClick && onClick()
-  }
+    const event: MouseEvent = e as MouseEvent;
+    event.preventDefault();
+    event.stopPropagation();
+    onClick && onClick();
+  };
   return (
     <Box
       lineHeight="1em"
@@ -59,7 +65,7 @@ function Partial({ title, value, action = false, onClick, disabled = false }: {
     >
       {
         action && (
-          <Button disabled={disabled} size="small" onClick={handleClick}>{ title }</Button>
+          <Button disabled={disabled} size="small" onClick={handleClick}>{title}</Button>
         )
       }
       {
@@ -129,8 +135,95 @@ const FILTER: Array<{
   },
 ];
 
+function MoreMenu({ onClick }: { onClick?: (type: string) => void}) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleItemClick = (type: string) => {
+    handleClose()
+    onClick && onClick(type);
+  }
+
+  return (
+    <>
+      <IconButton
+        onClick={handleClick}
+      >
+        <MoreIcon />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          },
+        }}
+        MenuListProps={{
+          dense: true
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={() => handleItemClick('open')}>
+          <ListItemIcon>
+            <OpenInNew fontSize="small" />
+          </ListItemIcon>
+          新窗口打开
+        </MenuItem>
+        <MenuItem onClick={() => handleItemClick('read')}>
+          <ListItemIcon>
+            <MarkUnreadChatAltIcon fontSize="small" />
+          </ListItemIcon>
+          设置为已读
+        </MenuItem>
+      </Menu>
+    </>
+  )
+}
+
 export const TopicList = (props: TopicListProps) => {
   const { topics, categories, order, handleFetch, loading, isLogin } = props;
+
+  const handleMenuClick = (type: string, topic: Topic) => {
+    switch (type) {
+      case 'read':
+        return handleReadWithTopic(topic)
+      case 'open':
+        return handlerViewTopic(topic.id, true)
+    }
+  }
 
   return (
     <Box
@@ -167,23 +260,25 @@ export const TopicList = (props: TopicListProps) => {
                       alignItems="flex-start"
                       disablePadding
                       secondaryAction={
-                        <IconButton
-                          edge="end"
-                          aria-label="open in new"
-                          onClick={() => handlerViewTopic(topic.id, true)}
-                        >
-                          <OpenInNew />
-                        </IconButton>
+                        <MoreMenu
+                          onClick={(type) => handleMenuClick(type, topic)}
+                        />
                       }
                       sx={[
                         {
+                          flexWrap: 'wrap',
+                          px: 0,
+                        },
+                        {
                           '& .MuiListItemSecondaryAction-root': {
-                            top: '24px',
+                            top: 22,
+                            right: 4
                           },
                         },
                       ]}
                     >
                       <ListItemButton
+                        disableRipple
                         onClick={() => handlerViewTopic(topic.id)}
                         onAuxClick={() => handlerViewTopic(topic.id, true)}
                       >
@@ -255,12 +350,13 @@ export const TopicList = (props: TopicListProps) => {
                           >
                             {
                               isLogin && (
-                                <Partial
-                                  title="标记已读"
-                                  action
-                                  onClick={() => handleReadWithTopic(topic)}
-                                  disabled={!topic.unseen && !topic.unread_posts}
-                                />
+                                <Box
+                                  lineHeight="1em"
+                                  flexShrink={0}
+                                  sx={{ px: 2 }}
+                                >
+                                  <Emotion id={`${topic.id}`} />
+                                </Box>
                               )
                             }
                             <Partial title="回复" value={formatNumber(topic.posts_count)} />

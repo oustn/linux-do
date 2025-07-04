@@ -1,4 +1,5 @@
 import {paths as openapi} from './openapi'
+import { PostDetail } from '@src/discourse/types.ts';
 
 export interface paths extends openapi {
   "/about.json": {
@@ -11,6 +12,10 @@ export interface paths extends openapi {
 
   "/topics/timings": {
     post: operations["timings"];
+  };
+
+  "/discourse-reactions/posts/{id}/custom-reactions/{reaction}/toggle.json": {
+    put: operations["toggleLike"];
   }
 }
 
@@ -88,5 +93,22 @@ interface operations {
         }
       }
     }
-  }
+  },
+
+  toggleLike: {
+    parameters: {
+      path: {
+        id: string;
+        reaction: string;
+      }
+    },
+    responses: {
+      /** @description success response */
+      200: {
+        content: {
+          "application/json": PostDetail
+        }
+      }
+    }
+  },
 }

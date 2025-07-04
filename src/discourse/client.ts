@@ -20,7 +20,7 @@ import {
   UnprocessableEntityError,
 } from '@src/discourse/errors.ts';
 import type { MediaType } from 'openapi-typescript-helpers';
-import { Get, Param, Override, Post, Header, Body } from '@src/discourse/decorators';
+import { Get, Param, Override, Post, Header, Body, Put } from '@src/discourse/decorators';
 
 export class Client extends ApiClient {
   private readonly client: ReturnType<typeof createClient<paths>>;
@@ -145,6 +145,18 @@ export class Client extends ApiClient {
     @Header('content-type') _contentType: string = 'application/x-www-form-urlencoded; charset=UTF-8',
   ) {
     return this.fetch<paths, 'post', '/topics/timings'>();
+  }
+
+  @Put('/discourse-reactions/posts/{id}/custom-reactions/{reaction}/toggle.json')
+  toggleLike(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('id') _id: ApiParams<paths, 'put', '/discourse-reactions/posts/{id}/custom-reactions/{reaction}/toggle.json'>['id'],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('reaction') _reaction: ApiParams<paths, 'put', '/discourse-reactions/posts/{id}/custom-reactions/{reaction}/toggle.json'>['reaction'],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Header('x-csrf-token') _csrfToken: string,
+  ) {
+    return this.fetch<paths, 'put', '/discourse-reactions/posts/{id}/custom-reactions/{reaction}/toggle.json'>();
   }
 
   async getCsrfToken(id: number | string) {

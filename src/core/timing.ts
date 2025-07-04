@@ -1,5 +1,6 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
 import { removePartitionCookies } from '@src/utils';
+import { Model } from './model.ts';
 
 export enum LatestTopicOrder {
   default = 'default',
@@ -29,9 +30,7 @@ async function wait(microsecond: number) {
   return new Promise(resolve => setTimeout(resolve, microsecond));
 }
 
-export class Timing {
-  private readonly client: Client;
-
+export class Timing extends Model {
   private minReqSize = 8;
 
   private maxReqSize = 20;
@@ -44,8 +43,6 @@ export class Timing {
 
   private maxReadTime = 3000;
 
-  private csrfToken = '';
-
   private tabs: Array<chrome.tabs.Tab> = [];
 
   private processing: Topic | null = null;
@@ -53,7 +50,7 @@ export class Timing {
   private readonly startId = 'timing-notification';
 
   constructor(client: Client) {
-    this.client = client;
+    super(client);
   }
 
   /**
@@ -84,13 +81,6 @@ export class Timing {
     params.append('topic_time', topicTime);
     params.append('topic_id', topicID);
     return params;
-  }
-
-  private async getCsrfToken(id: number | string) {
-    if (!this.csrfToken) {
-      this.csrfToken = await this.client.getCsrfToken(id);
-    }
-    return this.csrfToken;
   }
 
   private async sendBatch(topicID: string, csrfToken: string, startId: number, endId: number, retryCount = 5): Promise<boolean> {

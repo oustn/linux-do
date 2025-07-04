@@ -4,6 +4,7 @@ import { Runtime } from '@src/core/runtime.ts';
 
 import Page from './Page.tsx';
 import './index.scss';
+import { RuntimeContext } from '@src/pages/hooks/useRuntime.tsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main({ App }: { App: React.FC<{ runtime: Runtime | null }> }) {
@@ -16,7 +17,9 @@ function Main({ App }: { App: React.FC<{ runtime: Runtime | null }> }) {
   return (
     <React.StrictMode>
       <Page>
-        <App runtime={runtime} />
+        <RuntimeContext.Provider value={runtime}>
+          <App runtime={runtime} />
+        </RuntimeContext.Provider>
       </Page>
     </React.StrictMode>
   );

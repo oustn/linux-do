@@ -1,5 +1,7 @@
 import { ApiReturnType, Client } from '@src/discourse/client.ts';
-import { action, computed, IObservableArray, makeObservable, observable, runInAction } from 'mobx';
+import { action, computed, IObservableArray, makeObservable, observable, runInAction, ObservableMap } from 'mobx';
+import { PostDetail, TopicDetail } from '@src/discourse/types.ts';
+import { Model } from './model';
 
 export enum LatestTopicOrder {
   default = 'default',
@@ -21,13 +23,17 @@ export type Topic =
   author: User
 }
 
-export class LatestTopic {
+export class LatestTopic extends Model {
   private order: LatestTopicOrder = LatestTopicOrder.created;
 
   @observable.ref
   topics: IObservableArray<Topic> = observable.array([], { deep: false });
 
-  private readonly client: Client;
+  @observable.ref
+  topicMap: ObservableMap<string, TopicDetail & { post?: string } | null> = observable.map({}, { deep: false });
+
+  @observable.ref
+  postMap: ObservableMap<string, PostDetail | null> = observable.map({}, { deep: false });
 
   @observable
   loading = false;
@@ -42,7 +48,7 @@ export class LatestTopic {
   }
 
   constructor(client: Client) {
-    this.client = client;
+    super(client);
     makeObservable(this);
   }
 
@@ -64,8 +70,53 @@ export class LatestTopic {
       });
     } catch (error) {
       runInAction(() => {
-        this.loading = false
-      })
+        this.loading = false;
+      });
     }
+  }
+
+  async fetchDetail(id: string) {
+    const topic = await this.client.getTopic(id);
+    if (!topic) {
+      return null;
+    }
+    const postId = topic?.post_stream?.posts?.[0]?.id;
+    if (!postId) {
+      runInAction(() => {
+        this.topicMap.set(`${topic.id}`, topic);
+      });
+      return topic;
+    }
+    const post = await this.client.getPost(`${postId}`);
+    runInAction(() => {
+      this.topicMap.set(`${topic.id}`, {
+        ...topic,
+        post: `${postId}`,
+      });
+      this.postMap.set(`${postId}`, post as PostDetail ?? null);
+    });
+    return {
+      ...topic,
+      post,
+    };
+  }
+
+  async resolvePost(id: string) {
+    if (!this.topicMap.has(id)) {
+      await this.fetchDetail(id);
+    }
+    const topic = this.topicMap.get(id);
+    const post = topic?.post;
+    if (!post) return null;
+    return this.postMap.get(post);
+  }
+
+  async toggleLike(topicId: string, postId: string, reaction: string) {
+    const csrf = await this.getCsrfToken(topicId);
+    const postDetail = await this.client.toggleLike(postId, reaction, csrf);
+    runInAction(() => {
+      this.postMap.set(postId, postDetail ?? null);
+    });
+    return postDetail;
   }
 }

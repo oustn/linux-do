@@ -3,7 +3,7 @@ import { Config } from '@src/core/config.ts';
 import { rules } from './rules';
 import { Topic } from './core/type';
 import { READ_TOPIC, READ_TOPIC_BATCH } from '@src/constant.ts';
-import { DEFAULT_ALARM, removePartitionCookies, TIMING_ALARM } from '@src/utils';
+import { cancelAlarm, DEFAULT_ALARM, removePartitionCookies, setAlarm, TIMING_ALARM } from '@src/utils';
 import { LatestTopicOrder } from '@src/core/latest-topic.ts';
 
 const SETTING_MENU = 'setting_menu';
@@ -110,5 +110,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     if (hour < 7 || hour >= 21) return;
     console.log('自动阅读');
     await r.timing.timingBatch();
+    await cancelAlarm(TIMING_ALARM);
+    await setAlarm(TIMING_ALARM, {
+      periodInMinutes: Math.floor(Math.random() * 40) + 20,
+    });
   }
 });

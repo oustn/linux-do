@@ -54,7 +54,7 @@ export class Runtime extends Reaction {
   private async init() {
     await setAlarm();
     await setAlarm(TIMING_ALARM, {
-      periodInMinutes: 60
+      periodInMinutes: Math.floor(Math.random() * 40) + 20
     })
     await removePartitionCookies()
     // Alarm 监听
